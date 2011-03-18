@@ -1,0 +1,113 @@
+/* View Setting */
+#cfg_utility .postbox.required_err {
+    display: block;
+}
+
+#publishing-action #original_publish,
+#publishing-action #publish {
+	width: 80px;
+}
+#required_bg {
+    display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	width: 100%;
+	height: 100%;
+	background: #666666;
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	-ms-filter: 'alpha(opacity=90)';	
+}
+#required_box {
+    display: none;
+	position: absolute;
+	left: 50%;
+	z-index: 3;
+	width: 600px;
+	margin-left: -320px;
+	padding: 10px 20px;
+	background: #333333;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+#required_box #required_msg {
+	color: #ffffff;
+	font-size: 20px;
+	font-weight: bold;
+}
+#required_box #required_submit {
+	text-align: center;
+}
+#required_box .postbox div.inside {
+	padding: 10px;
+}
+div.postbox.required_err {
+    position: absolute;
+    z-index: 9;
+    width: 580px;
+    left: 50%;
+    margin-left: -290px;
+}
+
+div.postbox h4 {
+	font-size: 12px;
+	padding: 0 6px 6px;
+	margin-right: 6px;
+	margin-left: 6px;
+	line-height: 1.5;
+	border-bottom: 1px solid #DFDFDF;
+}
+div.imagefield div.inside {
+	height: 100px;
+	position: relative;
+}
+div.imagefield div.inside button.cancel {
+	margin-right: 1px;
+}
+div.imagefield div.inside span {
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	width: 150px;
+	height: 96px;
+	overflow: hidden;
+	border: #cccccc 2px solid;
+	background-color: #ebebeb;
+}
+div.imagefield div.inside img.cancel {
+	vertical-align: text-bottom;
+	cursor: pointer;
+}
+
+/* Multi Checkbox */
+div.multi_checkbox div.inside p.cfg_input input.data,
+div.multi_checkbox div.inside p.cfg_input span.default {
+	display: none;
+}
+div.multi_checkbox div.inside p.cfg_input label {
+	margin-right: 10px;
+}
+
+
+.postbox_hr {
+	margin-bottom: 20px !important;
+	padding: 7px 9px;
+	border-radius: 6px !important;
+	-moz-border-radius: 6px !important;
+	-webkit-border-radius: 6px !important;
+	line-height: 1;
+	font-size: 12px;
+	font-weight: bold;
+	background: #DFDFDF url(../images/gray-grad.png) repeat-x scroll left top;
+	color: #464646;
+}
+
+/* Inline Radio Button */
+div.radio p.cfg_input {
+	display: inline;
+}

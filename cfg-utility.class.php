@@ -1,0 +1,284 @@
+<?php
+/*
+Copyright (c)   2005 Joshua Sigar
+Licensed under the MIT License:
+Customize:   Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
+Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
+Last update: 2010-09-29
+*/
+
+class cfg_utility_class {
+
+    function sanitize_name($name ) {
+        $name = sanitize_title($name ); // taken from WP's wp-includes/functions-formatting.php
+        $name = str_replace( '-', '_', $name );
+        return $name;
+    }
+    
+    function get_custom_fields() {
+        $file = dirname( __FILE__ ) . '/conf.ini';
+        if ( !file_exists($file ) )
+            return null;
+        $custom_fields = parse_ini_file($file, true );
+        return $custom_fields;
+    }
+    
+    function make_element ($name, $type, $class, $inside, $sample, $fieldname, $must) {
+        if ($type == 'filefield') {
+            $type = 'imagefield filefield';
+        }
+        if ($class) {
+            $class = ' ' . $class;
+        } else {
+            $class = ' post';
+        }
+        if ($must) {
+            $must = ' must';
+        }
+        $caption = '';
+        if (($sample != '') and ($type != 'checkbox')) {
+            $caption = '<p class="cfg_sample">' . $sample . '</p>';
+        }
+        $elm = 
+            '<div class="postbox ' . $type . $class . $must . '" id="' . $name . '">' .
+                '<h4 class="cf_title">' . $fieldname . '</h4>' .
+                '<div class="inside">' . $inside . $caption . '</div>' .
+            '</div>';
+        
+        return $elm;
+    }
+    
+    function make_textfield ($name, $type, $class, $default, $size = 25, $sample, $fieldname, $must) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $value = get_post_meta($_REQUEST['post'], $title );
+            $value = $value[ 0 ];
+        }
+        if ($value) {
+            $value = attribute_escape($value);
+        } else {
+            $value = $default;
+        }
+        $inside = 
+            '<p class="cfg_input"><input class="data" id="' . $name . '" name="' . $name . '" value="' . $value . '" type="text" size="' . $size . '" title="' . $default . '" /></p>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+
+    function make_imagefield ($name, $type, $class, $size = 25, $sample, $fieldname, $must, $idname ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $value = get_post_meta($_REQUEST['post'], $title );
+            $value = $value[ 0 ];
+        }
+        $inside = 
+            '<p class="cfg_input">' .
+                '<input class="data" name="' . $name . '" value="' . attribute_escape($value) . '" type="text" size="' . $size . '" />' .
+                '<img class="cancel" src="" width="16" height="16" style="display:none;" />' .
+                '<span class="thumb" id="' . $name . '_thumb"><a href="#" class="image" rel="facebox"></a></span>' .
+            '</p>' .
+            '<p>画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;"/></P>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+
+    function make_filefield ($name, $type, $class, $size = 25, $sample, $fieldname, $must, $idname ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $value = get_post_meta($_REQUEST['post'], $title );
+            $value = $value[ 0 ];
+        }
+        $inside = 
+            '<p class="cfg_input">' .
+                '<input class="data" name="' . $name . '" value="' . attribute_escape($value) . '" type="text" size="' . $size . '" />' .
+                '<img class="cancel" src="" width="16" height="16" style="display:none;" />' .
+            '</p>' .
+            '<p>ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;"/></P>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+    
+    function make_checkbox ($name, $type, $class, $default, $sample, $fieldname, $must ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $checked = get_post_meta($_REQUEST['post'], $title );
+            $checked = $checked ? ' checked="checked"' : '';
+        } else {
+            if ( isset($default ) && trim($default ) == 'checked') {
+                $checked = ' checked="checked"';
+            }       
+        }
+        $inside =
+            '<p class="cfg_input">' .
+                '<label class="select" for="' . $name . '"><input class="checkbox data" name="' . $name . '" value="true" id="' . $name . '"' . $checked . ' type="checkbox" /> ' . $sample . ' </label>' .
+            '</p>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+
+    function make_multi_checkbox ($name, $type, $class, $values, $default, $sample, $fieldname, $must ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $value = get_post_meta($_REQUEST['post'], $title );
+            $value = $value[ 0 ];
+        }
+        foreach($values as $val ) {
+            $id = $name . '_' . cfg_utility_class::sanitize_name($val);
+            $item .= 
+                '<label for="' . $id . '" class="items" title="' . $val . '"><input id="' . $id . '" name="' . $id . '" value="' . $val . '" type="checkbox" /> ' . $val . '</label>';
+        }
+        $inside = 
+            '<p class="cfg_input">' . $item .
+                '<input class="data" id="' . $name . '_data" name="' . $name . '" value="' . attribute_escape($value) . '" type="text" />' .
+                '<span class="default">' . $default . '</span>' .
+            '</p>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+    
+    function make_radio ($name, $type, $class, $values, $default, $sample, $fieldname, $must ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $selected = get_post_meta($_REQUEST['post'], $title );
+            $selected = $selected[ 0 ];
+        } else {
+            $selected = $default;
+        }
+        foreach($values as $val ) {
+            $id = $name . '_' . cfg_utility_class::sanitize_name($val );
+            $checked = ( trim($val ) == trim($selected ) ) ? ' checked="checked"' : '';
+            $inside .= 
+                '<p class="cfg_input"><label for="' . $id . '"><input class="data" id="' . $id . '" name="' . $name . '" value="' . $val . '"' . $checked . ' type="radio" /> ' . $val . '</label></p>';
+        }
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+    
+    function make_select($name, $type, $class, $values, $default, $sample, $fieldname, $must ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $selected = get_post_meta($_REQUEST['post'], $title );
+            $selected = $selected[ 0 ];
+        } else {
+            $selected = $default;
+        }
+        $inside =
+            '<select name="' . $name . '">' .
+            '<option value="" >Select</option>';
+        foreach($values as $val ) {
+            $checked = ( trim($val ) == trim($selected ) ) ? ' selected="selected"' : '';
+            $inside .= '<option class="data" value="' . $val . '"' . $checked . '> ' . $val. '</option>'; 
+        }
+        $inside .= '</select>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+    
+    function make_textarea($name, $type, $class, $rows, $cols, $sample, $fieldname, $must ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
+        if ( isset($_REQUEST['post'] ) ) {
+            $value = get_post_meta($_REQUEST['post'], $title );
+            $value = $value[ 0 ];
+        }
+        $inside = 
+            '<textarea class="data" id="' . $name . '" name="' . $name . '" type="textfield" rows="' .$rows. '" cols="' .$cols. '">' .attribute_escape($value). '</textarea>';
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        return $out;
+    }
+
+    function make_hr($class, $fieldname ) {
+        return '<h5 class="postbox_hr ' . $class . '">' . $fieldname . '</h5>';
+    }
+
+    function insert_gui() {
+        $fields = cfg_utility_class::get_custom_fields();
+        if ($fields == null)
+            return;
+        $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key"
+            value="' . wp_create_nonce('custom-field-gui') . '" />';
+        foreach($fields as $title => $data ) {
+			$post_type = 'post';
+			if ($_REQUEST['post_type']){
+				$post_type = $_REQUEST['post_type'];
+			} else if($_REQUEST['post']){
+				$post_type=get_post_type($_REQUEST['post']);
+			}
+			$class_array = explode(' ',$data['class']);
+			if (!in_array($post_type,$class_array)){
+				continue;
+			}
+            if ($data['type'] == 'textfield') {
+                $out .= cfg_utility_class::make_textfield($title, $data['type'], $data['class'], $data['default'], $data['size'], $data['sample'], $data['fieldname'], $data['must'] );
+            } else if ($data['type'] == 'imagefield') {
+                $out .= cfg_utility_class::make_imagefield($title, $data['type'], $data['class'], $data['size'], $data['sample'], $data['fieldname'], $data['must'], $data['idname'] );
+            } else if ($data['type'] == 'filefield') {
+                $out .= cfg_utility_class::make_filefield($title, $data['type'], $data['class'], $data['size'], $data['sample'], $data['fieldname'], $data['must'], $data['idname'] );
+            } else if ($data['type'] == 'checkbox') {
+                $out .= 
+                    cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
+            } else if ($data['type'] == 'multi_checkbox') {
+                $out .= 
+                    cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode( '#', $data['value'] ), $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
+            } else if ($data['type'] == 'radio') {
+                $out .= 
+                    cfg_utility_class::make_radio( 
+                        $title, $data['type'], $data['class'], explode( '#', $data['value'] ), $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
+            } else if ($data['type'] == 'select') {
+                $out .= 
+                    cfg_utility_class::make_select( 
+                        $title, $data['type'], $data['class'], explode( '#', $data['value'] ), $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
+            } else if ($data['type'] == 'textarea') {
+                $out .= 
+                    cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must'] );
+            } else if ($data['type'] == 'hr') {
+                $out .= 
+                    cfg_utility_class::make_hr($data['class'], $data['fieldname'] );
+            }
+        }
+        echo $out;
+    }
+
+    function edit_meta_value($id ) {
+        if ( $id != 0 ) {
+            global $wpdb;
+            if ( !isset($id ) )
+                $id = $_REQUEST['post_ID'];
+            if ( !current_user_can('edit_post', $id) )
+                    return $id;
+            if ( !wp_verify_nonce($_REQUEST['custom-field-gui-verify-key'], 'custom-field-gui') )
+                    return $id;
+            $fields = cfg_utility_class::get_custom_fields();
+            if ($fields == null )
+                return;
+            foreach($fields as $title  => $data) {
+                $name = 'cfg_' . cfg_utility_class::sanitize_name($title );
+                $title = $wpdb->escape(stripslashes(trim($title)));
+                $meta_value = stripslashes(trim($_REQUEST[ "$name" ]));
+                if ( isset($meta_value ) && !empty($meta_value ) ) {
+                    delete_post_meta($id, $title );
+                    if ($data['type'] == 'textfield' || 
+                            $data['type'] == 'imagefield' || 
+                            $data['type'] == 'filefield' || 
+                            $data['type'] == 'multi_checkbox' ||
+                            $data['type'] == 'radio'  ||
+                            $data['type'] == 'select' || 
+                            $data['type'] == 'textarea') {
+                        add_post_meta($id, $title, $meta_value );
+                    } else if ($data['type'] == 'checkbox')
+                        add_post_meta($id, $title, 'true');
+                } else {
+                    delete_post_meta($id, $title );
+                }
+            }
+        }
+    }
+}
+?>
