@@ -1,14 +1,14 @@
 /*
- * Custom Field GUI Utility 3.0.6
+ * Custom Field GUI Utility 3.1
  *
  * Copyright (c) 2008-2009 Tomohiro Okuwaki
  * Licensed under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * Since:       2008-10-15
- * Last Update: 2010-04-22 : すべてのfunctionをreadyメソッドの中に入れた
+ * Last Update: 2010-04-22
  *
- * jQuery 1.3.2
+ * jQuery v1.4.4
  * Facebox 1.2
  * cookie.js
  */

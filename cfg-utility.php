@@ -6,7 +6,7 @@
   Description: WordPress 2.9.x のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
   Author: Customized by Tomohiro Okuwaki
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.0.6
+  Version: 3.1
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -55,12 +55,13 @@ $box_name = 'カスタムフィールド';
 
 function insert_head () {
 	$plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
-	$head = 
-	    '<link rel="stylesheet" href="' . $plugin_url . 'facebox/facebox.css" type="text/css" media="all" />'."\n".
-	    '<link rel="stylesheet" href="' . $plugin_url . 'cfg-utility.css" type="text/css" media="all" />'."\n".
-		'<script type="text/javascript" src="' . $plugin_url . 'facebox/facebox.js"></script>'."\n".
-		'<script type="text/javascript" src="' . $plugin_url . 'cookie.js"></script>'."\n".
-		'<script type="text/javascript" src="' . $plugin_url . 'cfg-utility.js"></script>'."\n";
+	$head = <<< __CFGU__
+	    <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
+	    <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
+		<script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
+		<script type="text/javascript" src="{$plugin_url}cookie.js"></script>
+		<script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
+__CFGU__;
 	echo $head;
 }
 add_action ('admin_head','insert_head');
