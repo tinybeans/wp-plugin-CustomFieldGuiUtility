@@ -9,59 +9,55 @@ Last update: 2010-09-29
 
 class cfg_utility_class {
 
-    function sanitize_name($name ) {
-        $name = sanitize_title($name ); // taken from WP's wp-includes/functions-formatting.php
-        $name = str_replace( '-', '_', $name );
+    function sanitize_name($name) {
+        $name = sanitize_title($name); // taken from WP's wp-includes/functions-formatting.php
+        $name = str_replace('-', '_', $name);
         return $name;
     }
-    
-    function get_custom_fields() {
-        $file = dirname( __FILE__ ) . '/conf.ini';
-        if ( !file_exists($file ) )
+
+    function get_custom_fields($suffix) {
+        $suffix = $suffix ? '-' . $suffix : '';
+        $file = dirname(__FILE__) . '/conf' . $suffix . '.ini';
+        if (!file_exists($file)) {
             return null;
-        $custom_fields = parse_ini_file($file, true );
+        }
+        $custom_fields = parse_ini_file($file, true);
         return $custom_fields;
     }
-    
+
     function make_element ($name, $type, $class, $inside, $sample, $fieldname, $must) {
-        if ($type == 'filefield') {
-            $type = 'imagefield filefield';
-        }
-        if ($class) {
-            $class = ' ' . $class;
-        } else {
-            $class = ' post';
-        }
-        if ($must) {
-            $must = ' must';
-        }
-        $caption = '';
-        if (($sample != '') and ($type != 'checkbox')) {
-            $caption = '<p class="cfg_sample">' . $sample . '</p>';
-        }
-        $elm = 
-            '<div class="postbox ' . $type . $class . $must . '" id="' . $name . '">' .
-                '<h4 class="cf_title">' . $fieldname . '</h4>' .
-                '<div class="inside">' . $inside . $caption . '</div>' .
-            '</div>';
-        
+        $type    = ($type == 'filefield') ? 'imagefield filefield' : $type;
+        $class   = isset($class) ? ' ' . $class : ' post';
+        $must    = isset($must) ? ' must' : '';
+        $caption = (($sample != '') and ($type != 'checkbox')) ? '<p class="cfg_sample">' . $sample . '</p>' : '';
+        $elm = <<< EOF
+            <div class="postbox {$type}{$class}{$must}" id="{$name}">
+                <h4 class="cf_title">{$fieldname}</h4>
+                <div class="inside">{$inside}{$caption}</div>
+            </div>
+EOF;
         return $elm;
     }
     
     function make_textfield ($name, $type, $class, $default, $size = 25, $sample, $fieldname, $must) {
         $title = $name;
-        $name = 'cfg_' . cfg_utility_class::sanitize_name($name );
-        if ( isset($_REQUEST['post'] ) ) {
-            $value = get_post_meta($_REQUEST['post'], $title );
-            $value = $value[ 0 ];
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
+        if (isset($_REQUEST['post'])) {
+            $value = get_post_meta($_REQUEST['post'], $title);
+            $value = $value[0];
         }
-        if ($value) {
-            $value = attribute_escape($value);
-        } else {
-            $value = $default;
-        }
-        $inside = 
-            '<p class="cfg_input"><input class="data" id="' . $name . '" name="' . $name . '" value="' . $value . '" type="text" size="' . $size . '" title="' . $default . '" /></p>';
+        $value = isset($value) ? attribute_escape($value) : attribute_escape($default);
+        $inside = <<< EOF
+            <p class="cfg_input">
+                <input class="data" 
+                       type="text"
+                       id="{$name}"
+                       name="{$name}"
+                       value="{$value}"
+                       size="{$size}"
+                       title="{$default}" />
+            </p>
+EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }

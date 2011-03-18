@@ -55,13 +55,13 @@ $box_name = 'カスタムフィールド';
 
 function insert_head () {
 	$plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
-	$head = <<< __CFGU__
+	$head = <<< EOF
 	    <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
 	    <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
 		<script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
 		<script type="text/javascript" src="{$plugin_url}cookie.js"></script>
 		<script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
-__CFGU__;
+EOF;
 	echo $head;
 }
 add_action ('admin_head','insert_head');
