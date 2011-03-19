@@ -200,41 +200,53 @@ EOF;
             return;
         $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key"
             value="' . wp_create_nonce('custom-field-gui') . '" />';
-        foreach($fields as $title => $data ) {
+
+        foreach ($fields as $title => $data ) {
 			$post_type = 'post';
-			if ($_REQUEST['post_type']){
+			$post_id = $_REQUEST['post'];
+			if (isset($post_id)) {
+				$post_type = get_post_type($post_id);
+				if ($post_type == 'post' and isset($data['category'])) {
+				    $cat_array = explode(' ', $data['category']);
+    				$cats = get_the_category($post_id);
+				    foreach ($cats as $cat) {
+				        $cat_slug = $cat->slug;
+            			if (!in_array($cat_slug, $cat_array)) {
+            				continue 2;
+            			}
+				    }
+				}
+			} elseif ($_REQUEST['post_type']){
 				$post_type = $_REQUEST['post_type'];
-			} else if($_REQUEST['post']){
-				$post_type=get_post_type($_REQUEST['post']);
 			}
 			$class_array = explode(' ',$data['class']);
-			if (!in_array($post_type,$class_array)){
+			if (!in_array($post_type, $class_array)) {
 				continue;
 			}
             if ($data['type'] == 'textfield') {
                 $out .= cfg_utility_class::make_textfield($title, $data['type'], $data['class'], $data['default'], $data['size'], $data['sample'], $data['fieldname'], $data['must'] );
-            } else if ($data['type'] == 'imagefield') {
+            } elseif ($data['type'] == 'imagefield') {
                 $out .= cfg_utility_class::make_imagefield($title, $data['type'], $data['class'], $data['size'], $data['sample'], $data['fieldname'], $data['must'], $data['idname'] );
-            } else if ($data['type'] == 'filefield') {
+            } elseif ($data['type'] == 'filefield') {
                 $out .= cfg_utility_class::make_filefield($title, $data['type'], $data['class'], $data['size'], $data['sample'], $data['fieldname'], $data['must'], $data['idname'] );
-            } else if ($data['type'] == 'checkbox') {
+            } elseif ($data['type'] == 'checkbox') {
                 $out .= 
                     cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
-            } else if ($data['type'] == 'multi_checkbox') {
+            } elseif ($data['type'] == 'multi_checkbox') {
                 $out .= 
                     cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode( '#', $data['value'] ), $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
-            } else if ($data['type'] == 'radio') {
+            } elseif ($data['type'] == 'radio') {
                 $out .= 
                     cfg_utility_class::make_radio( 
                         $title, $data['type'], $data['class'], explode( '#', $data['value'] ), $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
-            } else if ($data['type'] == 'select') {
+            } elseif ($data['type'] == 'select') {
                 $out .= 
                     cfg_utility_class::make_select( 
                         $title, $data['type'], $data['class'], explode( '#', $data['value'] ), $data['default'], $data['sample'], $data['fieldname'], $data['must'] );
-            } else if ($data['type'] == 'textarea') {
+            } elseif ($data['type'] == 'textarea') {
                 $out .= 
                     cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must'] );
-            } else if ($data['type'] == 'hr') {
+            } elseif ($data['type'] == 'hr') {
                 $out .= 
                     cfg_utility_class::make_hr($data['class'], $data['fieldname'] );
             }
@@ -268,7 +280,7 @@ EOF;
                             $data['type'] == 'select' || 
                             $data['type'] == 'textarea') {
                         add_post_meta($id, $title, $meta_value );
-                    } else if ($data['type'] == 'checkbox')
+                    } elseif ($data['type'] == 'checkbox')
                         add_post_meta($id, $title, 'true');
                 } else {
                     delete_post_meta($id, $title );
