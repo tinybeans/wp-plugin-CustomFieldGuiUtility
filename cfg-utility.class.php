@@ -157,12 +157,21 @@ EOF;
         } else {
             $selected = $default;
         }
+        $item_array = array();
         foreach($values as $val) {
             $id = $name . '_' . cfg_utility_class::sanitize_name($val);
-            $checked = (trim($val) == trim($selected)) ? ' checked="checked"' : '';
-            $inside .= 
-                '<p class="cfg_input"><label for="' . $id . '"><input class="data" id="' . $id . '" name="' . $name . '" value="' . $val . '"' . $checked . ' type="radio" /> ' . $val . '</label></p>';
+            $checked = (trim($val) == trim($selected)) ? ' checked="checked" ' : ' ';
+            $item = <<< EOF
+                <p class="cfg_input">
+                    <label for="{$id}">
+                        <input class="data" id="{$id}" name="{$name}" value="{$val}"{$checked}type="radio" />
+                        {$val}
+                    </label>
+                </p>
+EOF;
+            array_push($item_array, $item);
         }
+        $inside = implode($item_array);
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
@@ -176,27 +185,34 @@ EOF;
         } else {
             $selected = $default;
         }
-        $inside =
-            '<select name="' . $name . '">' .
-            '<option value="" >Select</option>';
-        foreach($values as $val) {
-            $checked = (trim($val) == trim($selected)) ? ' selected="selected"' : '';
-            $inside .= '<option class="data" value="' . $val . '"' . $checked . '> ' . $val. '</option>'; 
+        $item = <<< EOF
+            <select name="{$name}">
+                <option value="">Select</option>
+EOF;
+        $item_array = array($item);
+        foreach ($values as $val) {
+            $checked = (trim($val) == trim($selected)) ? ' selected="selected" ' : ' ';
+            $item = <<< EOF
+                <option class="data" value="{$val}"{$checked}>{$val}</option>
+EOF;
+            array_push($item_array, $item);
         }
-        $inside .= '</select>';
+        array_push($item_array, '</select>');
+        $inside = implode($item_array);
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
-    
+
     function make_textarea($name, $type, $class, $rows, $cols, $sample, $fieldname, $must) {
         $title = $name;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
         if (isset($_REQUEST['post'])) {
             $value = get_post_meta($_REQUEST['post'], $title);
-            $value = $value[0];
+            $value = attribute_escape($value[0]);
         }
-        $inside = 
-            '<textarea class="data" id="' . $name . '" name="' . $name . '" type="textfield" rows="' .$rows. '" cols="' .$cols. '">' .attribute_escape($value). '</textarea>';
+        $inside = <<< EOF
+            <textarea class="data" id="{$name}" name="{$name}" type="textfield" rows="{$rows}" cols="{$cols}">{$value}</textarea>
+EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
