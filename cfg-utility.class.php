@@ -223,8 +223,9 @@ EOF;
 
     function insert_gui() {
         $fields = cfg_utility_class::get_custom_fields();
-        if ($fields == null)
+        if ($fields == null) {
             return;
+        }
         $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key"
             value="' . wp_create_nonce('custom-field-gui') . '" />';
 
@@ -284,15 +285,20 @@ EOF;
     function edit_meta_value($id) {
         if ($id != 0) {
             global $wpdb;
-            if (!isset($id))
+            if (!isset($id)) {
                 $id = $_REQUEST['post_ID'];
-            if (!current_user_can('edit_post', $id))
-                    return $id;
-            if (!wp_verify_nonce($_REQUEST['custom-field-gui-verify-key'], 'custom-field-gui'))
-                    return $id;
+            }
+            if (!current_user_can('edit_post', $id)) {
+                return $id;
+            }
+            if (!wp_verify_nonce($_REQUEST['custom-field-gui-verify-key'], 'custom-field-gui')) {
+                return $id;
+            }
             $fields = cfg_utility_class::get_custom_fields();
-            if ($fields == null)
+            if ($fields == null) {
                 return;
+            }
+
             foreach($fields as $title  => $data) {
                 $name = 'cfg_' . cfg_utility_class::sanitize_name($title);
                 $title = $wpdb->escape(stripslashes(trim($title)));
@@ -307,8 +313,9 @@ EOF;
                             $data['type'] == 'select' || 
                             $data['type'] == 'textarea') {
                         add_post_meta($id, $title, $meta_value);
-                    } elseif ($data['type'] == 'checkbox')
+                    } elseif ($data['type'] == 'checkbox') {
                         add_post_meta($id, $title, 'true');
+                    }
                 } else {
                     delete_post_meta($id, $title);
                 }
