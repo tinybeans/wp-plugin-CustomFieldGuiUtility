@@ -107,14 +107,14 @@ EOF;
             }       
         }
         $inside = <<< EOF
-            @@@<p class="cfg_input">
+            <p class="cfg_input">
                 <label class="select" for="{$name}">
                     <input class="checkbox data" name="{$name}" value="true" id="{$name}"{$checked}type="checkbox" />
                     {$sample}
                 </label>
             </p>
 EOF;
-        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        $out = cfg_utility_class::make_element ($name, 'checkboxs', $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
 
@@ -123,22 +123,31 @@ EOF;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
         if (isset($_REQUEST['post'])) {
             $value = get_post_meta($_REQUEST['post'], $title);
-            $value = $value[0];
+            $value = attribute_escape($value[0]);
         }
-        foreach($values as $val) {
+        $item_array = array();
+        foreach ($values as $val) {
             $id = $name . '_' . cfg_utility_class::sanitize_name($val);
-            $item .= 
-                '<label for="' . $id . '" class="items" title="' . $val . '"><input id="' . $id . '" name="' . $id . '" value="' . $val . '" type="checkbox" /> ' . $val . '</label>';
+            $item = <<< EOF
+                <label for="{$id}" class="items" title="{$val}">
+                    <input id="{$id}" name="{$id}" value="{$val}" type="checkbox" />
+                    {$val}
+                </label>
+EOF;
+            array_push($item_array, $item);
         }
-        $inside = 
-            '<p class="cfg_input">' . $item .
-                '<input class="data" id="' . $name . '_data" name="' . $name . '" value="' . attribute_escape($value) . '" type="text" />' .
-                '<span class="default">' . $default . '</span>' .
-            '</p>';
+        $item_str = implode($item_array);
+        $inside = <<< EOF
+            <p class="cfg_input">
+                {$item_str}
+                <input class="data" id="{$name}_data" name="{$name}" value="{$value}" type="text" />
+                <span class="default">{$default}</span>
+            </p>
+EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
-    
+
     function make_radio ($name, $type, $class, $values, $default, $sample, $fieldname, $must) {
         $title = $name;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
