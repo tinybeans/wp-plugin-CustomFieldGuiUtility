@@ -202,27 +202,27 @@ EOF;
             value="' . wp_create_nonce('custom-field-gui') . '" />';
 
         foreach ($fields as $title => $data ) {
-			$post_type = 'post';
-			$post_id = $_REQUEST['post'];
-			if (isset($post_id)) {
-				$post_type = get_post_type($post_id);
-				if ($post_type == 'post' and isset($data['category'])) {
-				    $cat_array = explode(' ', $data['category']);
-    				$cats = get_the_category($post_id);
-				    foreach ($cats as $cat) {
-				        $cat_slug = $cat->slug;
-            			if (!in_array($cat_slug, $cat_array)) {
-            				continue 2;
-            			}
-				    }
-				}
-			} elseif ($_REQUEST['post_type']){
-				$post_type = $_REQUEST['post_type'];
-			}
-			$class_array = explode(' ',$data['class']);
-			if (!in_array($post_type, $class_array)) {
-				continue;
-			}
+            $post_type = 'post';
+            $post_id = $_REQUEST['post'];
+            if (isset($post_id)) {
+                $post_type = get_post_type($post_id);
+                if ($post_type == 'post' and isset($data['category'])) {
+                    $cat_array = explode(' ', $data['category']);
+                    $cats = get_the_category($post_id);
+                    foreach ($cats as $cat) {
+                        $cat_slug = $cat->slug;
+                        if (!in_array($cat_slug, $cat_array)) {
+                            continue 2;
+                        }
+                    }
+                }
+            } elseif ($_REQUEST['post_type']){
+                $post_type = $_REQUEST['post_type'];
+            }
+            $class_array = explode(' ',$data['class']);
+            if (!in_array($post_type, $class_array)) {
+                continue;
+            }
             if ($data['type'] == 'textfield') {
                 $out .= cfg_utility_class::make_textfield($title, $data['type'], $data['class'], $data['default'], $data['size'], $data['sample'], $data['fieldname'], $data['must'] );
             } elseif ($data['type'] == 'imagefield') {

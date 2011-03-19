@@ -54,15 +54,15 @@ $box_name = 'カスタムフィールド';
 // カスタムフィールドを入れるボックス名の指定 [ end ]
 
 function insert_head () {
-	$plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
-	$head = <<< EOF
-	    <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
-	    <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
-		<script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
-		<script type="text/javascript" src="{$plugin_url}cookie.js"></script>
-		<script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
+    $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
+    $head = <<< EOF
+        <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
+        <script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
+        <script type="text/javascript" src="{$plugin_url}cookie.js"></script>
+        <script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
 EOF;
-	echo $head;
+    echo $head;
 }
 add_action ('admin_head','insert_head');
 
@@ -79,10 +79,10 @@ add_meta_box('cfg_utility', $box_name, array('cfg_utility_class', 'insert_gui'),
 /* page and custom post type */
 $cur_post_type=$_REQUEST['post_type'];
 if($_REQUEST['post']){
-	$cur_post_type=get_post_type($_REQUEST['post']);
+    $cur_post_type=get_post_type($_REQUEST['post']);
 }
 if ($cur_post_type){
-	add_meta_box('cfg_utility', $box_name, array('cfg_utility_class', 'insert_gui'), $cur_post_type, 'normal', 'high');
+    add_meta_box('cfg_utility', $box_name, array('cfg_utility_class', 'insert_gui'), $cur_post_type, 'normal', 'high');
 }
 
 /* post and page */
