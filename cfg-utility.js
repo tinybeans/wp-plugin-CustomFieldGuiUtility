@@ -23,6 +23,10 @@ jQuery(function($){
             media_url = str.replace(/(<img src=")([^"]+)(".+)/,'$2');
         } else if (str.match(/^<a/)) {
             media_url = str.replace(/(<a href=")([^"]+)(".+)/,'$2');
+        // 株式会社ウィル用に追加 [start]
+        } else if (str.match(/^[0-9]/)) {
+            media_url = str.replace(/([0-9]+\|)(.+)/,'$2');
+        // 株式会社ウィル用に追加 [ end ]
         } else {
             media_url = str;
         }
@@ -80,10 +84,11 @@ jQuery(function($){
     
     function insert_btn (id) {
         var imf_ins_btns = 
-            '<span title="#' + id + '">カスタムフィールドに挿入 : </span>' + 
-            '<span title="#' + id + '" class="button imf_ins_url">URL</span>' + 
-            '<span title="#' + id + '" class="button imf_ins_img">imgタグ</span>' +
-            '<span title="#' + id + '" class="button imf_ins_a">aタグ</span><br />';
+//            '<span title="#' + id + '">カスタムフィールドに挿入 : </span>' + 
+            '<span title="#' + id + '" class="button imf_ins_url">カスタムフィールドに挿入</span><br />';
+//            '<span title="#' + id + '" class="button imf_ins_img">imgタグ</span>' +
+//            '<span title="#' + id + '" class="button imf_ins_a">aタグ</span><br />';
+
         return imf_ins_btns;
     }
     
@@ -228,14 +233,20 @@ jQuery(function($){
     // [start]カスタムフィールドに「URL」を挿入するボタンのイベント
     $('span.imf_ins_url').live('click', function(){
         var id = $(this).attr('title');
+        // 株式会社ウィル用に追加 [start]
+        var div = $(this).parents('div.preloaded');
+        var attachment_id = div.attr('id');
+        attachment_id = attachment_id.replace(/media-item-/,'');
+        // 株式会社ウィル用に追加 [ end ]
         var media_url = $(id + ' td.field input.urlfield').val();
-        $.cookie('imf_value',media_url);
+        $.cookie('imf_value',attachment_id + '|' + media_url);
 
         $('p.ml-submit input:submit').click();
     });
     // [end]カスタムフィールドに「URL」を挿入するボタンのイベント
 
     // [start]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
+/*
     $('span.imf_ins_img').live('click', function(){
         var id = $(this).attr('title');
 
@@ -263,9 +274,11 @@ jQuery(function($){
         $('p.ml-submit input:submit').click();
         
     });
+*/
     // [end]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
     
     // [start]カスタムフィールドに「aタグ」を挿入するボタンのイベント
+/*
     $('span.imf_ins_a').live('click', function(){
         var id = $(this).attr('title');
         
@@ -288,8 +301,6 @@ jQuery(function($){
             var thumb_url = get_thumb_url(id);
             var original_url = $(id + ' tr.url td.field button.urlfile').attr('title');
             media_elm = '<a href="' + original_url + '"' + media_atr_ttl + ' class="cfg_link"><img src="' + thumb_url + '" alt="' + media_ttl + '" class="cfg_img" /></a>';
-            alert(thumb_url);
-
         } else {
             media_elm = '<a href="' + media_url + '"' + media_atr_ttl + ' class="cfg_link">' + media_ttl + '</a>';
         }
@@ -299,14 +310,17 @@ jQuery(function($){
         $('p.ml-submit input:submit').click();
         
     });
+*/
     // [end]カスタムフィールドに「aタグ」を挿入するボタンのイベント
 
     // [start]サムネイルのURLを「リンクURL」に挿入
+/*
     $('tr.url button.use_thumb').live('click', function(){
         var id = $(this).attr('title');
         var thumb_url = get_thumb_url(id);
         $(this).prevAll('input.urlfield').val(thumb_url);
     });
+*/
     // [end]サムネイルのURLを「リンクURL」に挿入
 
     // [start]管理画面にサムネイルを表示
