@@ -23,10 +23,8 @@ jQuery(function($){
             media_url = str.replace(/(<img src=")([^"]+)(".+)/,'$2');
         } else if (str.match(/^<a/)) {
             media_url = str.replace(/(<a href=")([^"]+)(".+)/,'$2');
-        // 株式会社ウィル用に追加 [start]
         } else if (str.match(/^[0-9]/)) {
             media_url = str.replace(/([0-9]+\|)(.+)/,'$2');
-        // 株式会社ウィル用に追加 [ end ]
         } else {
             media_url = str;
         }
@@ -103,7 +101,32 @@ jQuery(function($){
             thumb_url = thumb_url.replace(/(\.[a-z]{2,5}$)/i,thumb_size + thumb_ext);
         return thumb_url;
     }
+
+    // cookieのセット
+    function setCookie(key, val, days){
+        var cookie = escape(key) + "=" + escape(val);
+        if(days != null){
+            var expires = new Date();
+            expires.setDate(expires.getDate() + days);
+            cookie += ";expires=" + expires.toGMTString();
+        }
+        document.cookie = cookie;
+    }
     
+    // cookieの取得
+    function getCookie(key) {
+        if(document.cookie){
+            var cookies = document.cookie.split(";");
+            for(var i=0; i<cookies.length; i++){
+                var cookie = cookies[i].replace(/\s/g,"").split("=");
+                if(cookie[0] == escape(key)){
+                    return unescape(cookie[1]);
+                }
+            }
+        }
+        return "";
+    }
+
     var css_static = {
         'position':'static'
     };
