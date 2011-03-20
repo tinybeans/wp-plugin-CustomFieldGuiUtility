@@ -125,6 +125,12 @@ EOF;
             $value = get_post_meta($_REQUEST['post'], $title);
             $value = attribute_escape($value[0]);
         }
+        if (!isset($value) and isset($default)) {
+            $pattern = '/( |　)*#( |　)*/';
+            $replacement = ',';
+            $value = preg_replace($pattern, $replacement, $default);
+        }
+        echo($miyu);
         $item_array = array();
         foreach ($values as $val) {
             $id = $name . '_' . cfg_utility_class::sanitize_name($val);
@@ -141,7 +147,6 @@ EOF;
             <p class="cfg_input">
                 {$item_str}
                 <input class="data" id="{$name}_data" name="{$name}" value="{$value}" type="text" />
-                <span class="default">{$default}</span>
             </p>
 EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
