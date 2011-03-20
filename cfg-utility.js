@@ -144,49 +144,53 @@ jQuery(function($){
     var cancel_png = images_url + 'cancel.png';
     var must_png = images_url + 'must.png';
 
-    // [start] Multi Checkbox
-    $('div.postbox.multi_checkbox').each(function(){
+    // Multi Checkbox [start]
+    $('div.multi_checkbox').each(function(){
     
         var self = $(this);
 
-        var checkboxs  = $('input:checkbox', self);
-        var mc_val_elm = $('input.data', self);
-        var mc_val_str = mc_val_elm.val();
-        var mc_val_def = $('span.default', self).text();
-            mc_val_def = mc_val_def.replace(/[ 　]*#[ 　]*/,',');
+        var checkboxs  = self.find('input:checkbox');
+        var data_elm = self.find('input.data');
+        var data_val = data_elm.val();
+        var data_def = self.find('span.default').text().replace(/[ 　]*#[ 　]*/g,',');
 
-        var mc_val_arr = new Array;
-        if (mc_val_str) {
-            mc_val_arr = mc_val_str.split(',');
-            for (var i = 0; i < mc_val_arr.length; i++) {
+        var data_arry = new Array;
+        if (data_val) {
+            data_arry = data_val.split(',');
+            checkboxs.val(data_arry);
+/*
+            for (var i = 0, n = data_arry.length; i < n; i++) {
                 checkboxs.each(function(){
-                    if ($(this).val() == mc_val_arr[i]) {
+                    if ($(this).val() == data_arry[i]) {
                         $(this).attr('checked','checked');
                     }
                 });
             }
-        } else {
-            mc_val_elm.val(mc_val_def);
-            mc_val_arr = mc_val_def.split(',');
-            for (var i = 0; i < mc_val_arr.length; i++) {
+*/
+        }
+/*
+         else {
+            data_elm.val(data_def);
+            data_arry = data_def.split(',');
+            for (var i = 0; i < data_arry.length; i++) {
                 checkboxs.each(function(){
-                    if ($(this).val() == mc_val_arr[i]) {
+                    if ($(this).val() == data_arry[i]) {
                         $(this).attr('checked','checked');
                     }
                 });
             }
         }
+*/
         
         checkboxs.click(function(){
-            var mc_val_arr = new Array;
-            
-            $('input:checked', self).each(function(){
-                mc_val_arr.push($(this).val());
+            var data_arry = new Array;
+            self.find('input:checked').each(function(){
+                data_arry.push($(this).val());
             });
-            $('input.data', self).val(mc_val_arr.join());
+            self.find('input.data').val(data_arry.join());
         });
     });
-    // [end] Multi Checkbox
+    // Multi Checkbox [end]
 
 
 
