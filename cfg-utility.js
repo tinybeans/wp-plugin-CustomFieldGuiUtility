@@ -18,15 +18,20 @@ jQuery(function($){
 // Functions
 
     function getMediaURL (str) {
+        return str.replace(/^(\[[0-9]+\])(.+)/,'$2');
+/*
         var media_url;
         if (str.match(/^<img/)) {
             media_url = str.replace(/(<img src=")([^"]+)(".+)/,'$2');
         } else if (str.match(/^<a/)) {
             media_url = str.replace(/(<a href=")([^"]+)(".+)/,'$2');
+        } else if (str.match(/^[0-9]/)) {
+            media_url = str.replace(/([0-9]+\|)(.+)/,'$2');
         } else {
             media_url = str;
         }
         return media_url;
+*/
     }
     
     function getMediaType (str) {
@@ -80,10 +85,11 @@ jQuery(function($){
     
     function insert_btn (id) {
         var imf_ins_btns = 
-            '<span title="#' + id + '">カスタムフィールドに挿入 : </span>' + 
-            '<span title="#' + id + '" class="button imf_ins_url">URL</span>' + 
-            '<span title="#' + id + '" class="button imf_ins_img">imgタグ</span>' +
-            '<span title="#' + id + '" class="button imf_ins_a">aタグ</span><br />';
+//            '<span title="#' + id + '">カスタムフィールドに挿入 : </span>' + 
+            '<span title="#' + id + '" class="button imf_ins_url">カスタムフィールドに挿入</span><br />';
+//            '<span title="#' + id + '" class="button imf_ins_img">imgタグ</span>' +
+//            '<span title="#' + id + '" class="button imf_ins_a">aタグ</span><br />';
+
         return imf_ins_btns;
     }
     
@@ -98,7 +104,32 @@ jQuery(function($){
             thumb_url = thumb_url.replace(/(\.[a-z]{2,5}$)/i,thumb_size + thumb_ext);
         return thumb_url;
     }
+
+    // cookieのセット
+    function setCookie(key, val, days){
+        var cookie = escape(key) + "=" + escape(val);
+        if(days != null){
+            var expires = new Date();
+            expires.setDate(expires.getDate() + days);
+            cookie += ";expires=" + expires.toGMTString();
+        }
+        document.cookie = cookie;
+    }
     
+    // cookieの取得
+    function getCookie(key) {
+        if(document.cookie){
+            var cookies = document.cookie.split(";");
+            for(var i=0; i<cookies.length; i++){
+                var cookie = cookies[i].replace(/\s/g,"").split("=");
+                if(cookie[0] == escape(key)){
+                    return unescape(cookie[1]);
+                }
+            }
+        }
+        return "";
+    }
+
     var css_static = {
         'position':'static'
     };
@@ -116,74 +147,58 @@ jQuery(function($){
     var cancel_png = images_url + 'cancel.png';
     var must_png = images_url + 'must.png';
 
-    // [start] Multi Checkbox
-    $('div.postbox.multi_checkbox').each(function(){
+    // Multi Checkbox [start]
+    $('div.multi_checkbox').each(function(){
     
         var self = $(this);
 
-        var checkboxs  = $('input:checkbox', self);
-        var mc_val_elm = $('input.data', self);
-        var mc_val_str = mc_val_elm.val();
-        var mc_val_def = $('span.default', self).text();
-            mc_val_def = mc_val_def.replace(/[ 　]*#[ 　]*/,',');
+        var checkboxs  = self.find('input:checkbox');
+        var data_elm = self.find('input.data');
+        var data_val = data_elm.val();
+        var data_def = self.find('span.default').text().replace(/[ 　]*#[ 　]*/g,',');
 
-        var mc_val_arr = new Array;
-        if (mc_val_str) {
-            mc_val_arr = mc_val_str.split(',');
-            for (var i = 0; i < mc_val_arr.length; i++) {
-                checkboxs.each(function(){
-                    if ($(this).val() == mc_val_arr[i]) {
-                        $(this).attr('checked','checked');
-                    }
-                });
-            }
-        } else {
-            mc_val_elm.val(mc_val_def);
-            mc_val_arr = mc_val_def.split(',');
-            for (var i = 0; i < mc_val_arr.length; i++) {
-                checkboxs.each(function(){
-                    if ($(this).val() == mc_val_arr[i]) {
-                        $(this).attr('checked','checked');
-                    }
-                });
-            }
+        var data_arry = new Array;
+        if (data_val) {
+            data_arry = data_val.split(',');
+            checkboxs.val(data_arry);
         }
         
         checkboxs.click(function(){
-            var mc_val_arr = new Array;
-            
-            $('input:checked', self).each(function(){
-                mc_val_arr.push($(this).val());
+            var data_arry = new Array;
+            self.find('input:checked').each(function(){
+                data_arry.push($(this).val());
             });
-            $('input.data', self).val(mc_val_arr.join());
+            self.find('input.data').val(data_arry.join());
         });
     });
-    // [end] Multi Checkbox
+    // Multi Checkbox [end]
 
 
 
-    // [start]イメージフィールド・ファイルフィールド周りのliveイベントを設定
+    // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
     $('img.cfg_add_media').live('click', function(){
+        var self = $(this);
         
         // アップローダーをクリック(clc)したイメージフィールドのidをcookieに保存
-        var clc_id = $(this).parents('div.imagefield').attr('id');
-        $.cookie('imf_clc_id',clc_id);
+        var clc_id = self.parents('div.imagefield').attr('id');
+        setCookie('imf_clc_id',clc_id);
         
         // WPオリジナルのアップローダーを起動
-        if ($('#media-buttons #add_media')) {
-            $('#media-buttons #add_media').click();
+        if ($('#add_media').length > 0) {
+            $('#add_media').click();
         } else {
             $('#media-buttons a').click();
         }
         
         // アップローダーを閉じるときにカスタムフィールドに値を挿入する動き
-        $('#TB_window #TB_closeWindowButton img, #TB_overlay').click(function(){
+        $('#TB_closeWindowButton').click(function(){
     
             // cookieからidと値を取得して変数に代入後にリセット
-            var imf_clc_id = '#' + $.cookie('imf_clc_id');
-            var imf_val  = $.cookie('imf_value');
-            $.cookie('imf_clc_id','');
-            $.cookie('imf_value','');
+            var imf_clc_id = '#' + getCookie('imf_clc_id');
+            var imf_elm = $(imf_clc_id);
+            var imf_val  = getCookie('imf_value');
+            setCookie('imf_clc_id','');
+            setCookie('imf_value','');
             
             // カスタムフィールドに値を入れる
             if (imf_val) {
@@ -192,19 +207,22 @@ jQuery(function($){
                 var media_url = getMediaURL (imf_val);
                 var media_type = getMediaType (media_url);
                 if (media_type) {
-                    $(imf_clc_id).find('input.data')
-                        .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                        .css('padding-left','20px');
-                    $(imf_clc_id).find('a.image').attr('href',media_url).html('<img src="' + media_url + '" width="150" />');
+                    imf_elm
+                        .find('input.data')
+                            .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
+                            .css('padding-left','20px')
+                        .end()
+                        .find('a.image')
+                            .attr('href',media_url)
+                            .html('<img src="' + media_url + '" width="150" />');
                 } else {
-                    $(imf_clc_id).find('input.data').removeAttr('style');          
+                    imf_elm.find('input.data').removeAttr('style');          
                 }
-                $(imf_clc_id).find('img.cancel').attr('src', cancel_png).show();
+                imf_elm.find('img.cancel').attr('src', cancel_png).show();
             }
-
         });
     });
-    // [end]イメージフィールド・ファイルフィールド周りのliveイベントを設定
+    // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [end]
 
     // [start]アップローダーにカスタムフィールド用ボタンを追加
     $('#media-upload #media-items div.media-item').each(function(){
@@ -228,14 +246,20 @@ jQuery(function($){
     // [start]カスタムフィールドに「URL」を挿入するボタンのイベント
     $('span.imf_ins_url').live('click', function(){
         var id = $(this).attr('title');
+        // 株式会社ウィル用に追加 [start]
+        var div = $(this).parents('div.preloaded');
+        var attachment_id = div.attr('id');
+        attachment_id = attachment_id.replace(/media-item-/,'');
+        // 株式会社ウィル用に追加 [ end ]
         var media_url = $(id + ' td.field input.urlfield').val();
-        $.cookie('imf_value',media_url);
+        $.cookie('imf_value','[' + attachment_id + ']' + media_url);
 
         $('p.ml-submit input:submit').click();
     });
     // [end]カスタムフィールドに「URL」を挿入するボタンのイベント
 
     // [start]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
+/*
     $('span.imf_ins_img').live('click', function(){
         var id = $(this).attr('title');
 
@@ -263,9 +287,11 @@ jQuery(function($){
         $('p.ml-submit input:submit').click();
         
     });
+*/
     // [end]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
     
     // [start]カスタムフィールドに「aタグ」を挿入するボタンのイベント
+/*
     $('span.imf_ins_a').live('click', function(){
         var id = $(this).attr('title');
         
@@ -288,8 +314,6 @@ jQuery(function($){
             var thumb_url = get_thumb_url(id);
             var original_url = $(id + ' tr.url td.field button.urlfile').attr('title');
             media_elm = '<a href="' + original_url + '"' + media_atr_ttl + ' class="cfg_link"><img src="' + thumb_url + '" alt="' + media_ttl + '" class="cfg_img" /></a>';
-            alert(thumb_url);
-
         } else {
             media_elm = '<a href="' + media_url + '"' + media_atr_ttl + ' class="cfg_link">' + media_ttl + '</a>';
         }
@@ -299,14 +323,17 @@ jQuery(function($){
         $('p.ml-submit input:submit').click();
         
     });
+*/
     // [end]カスタムフィールドに「aタグ」を挿入するボタンのイベント
 
     // [start]サムネイルのURLを「リンクURL」に挿入
+/*
     $('tr.url button.use_thumb').live('click', function(){
         var id = $(this).attr('title');
         var thumb_url = get_thumb_url(id);
         $(this).prevAll('input.urlfield').val(thumb_url);
     });
+*/
     // [end]サムネイルのURLを「リンクURL」に挿入
 
     // [start]管理画面にサムネイルを表示
