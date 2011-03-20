@@ -18,6 +18,8 @@ jQuery(function($){
 // Functions
 
     function getMediaURL (str) {
+        return str.replace(/^(\[[0-9]+\])(.+)/,'$2');
+/*
         var media_url;
         if (str.match(/^<img/)) {
             media_url = str.replace(/(<img src=")([^"]+)(".+)/,'$2');
@@ -29,6 +31,7 @@ jQuery(function($){
             media_url = str;
         }
         return media_url;
+*/
     }
     
     function getMediaType (str) {
@@ -158,29 +161,7 @@ jQuery(function($){
         if (data_val) {
             data_arry = data_val.split(',');
             checkboxs.val(data_arry);
-/*
-            for (var i = 0, n = data_arry.length; i < n; i++) {
-                checkboxs.each(function(){
-                    if ($(this).val() == data_arry[i]) {
-                        $(this).attr('checked','checked');
-                    }
-                });
-            }
-*/
         }
-/*
-         else {
-            data_elm.val(data_def);
-            data_arry = data_def.split(',');
-            for (var i = 0; i < data_arry.length; i++) {
-                checkboxs.each(function(){
-                    if ($(this).val() == data_arry[i]) {
-                        $(this).attr('checked','checked');
-                    }
-                });
-            }
-        }
-*/
         
         checkboxs.click(function(){
             var data_arry = new Array;
@@ -194,28 +175,30 @@ jQuery(function($){
 
 
 
-    // [start]イメージフィールド・ファイルフィールド周りのliveイベントを設定
+    // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
     $('img.cfg_add_media').live('click', function(){
+        var self = $(this);
         
         // アップローダーをクリック(clc)したイメージフィールドのidをcookieに保存
-        var clc_id = $(this).parents('div.imagefield').attr('id');
-        $.cookie('imf_clc_id',clc_id);
+        var clc_id = self.parents('div.imagefield').attr('id');
+        setCookie('imf_clc_id',clc_id);
         
         // WPオリジナルのアップローダーを起動
-        if ($('#media-buttons #add_media')) {
-            $('#media-buttons #add_media').click();
+        if ($('#add_media').length > 0) {
+            $('#add_media').click();
         } else {
             $('#media-buttons a').click();
         }
         
         // アップローダーを閉じるときにカスタムフィールドに値を挿入する動き
-        $('#TB_window #TB_closeWindowButton img, #TB_overlay').click(function(){
+        $('#TB_closeWindowButton').click(function(){
     
             // cookieからidと値を取得して変数に代入後にリセット
-            var imf_clc_id = '#' + $.cookie('imf_clc_id');
-            var imf_val  = $.cookie('imf_value');
-            $.cookie('imf_clc_id','');
-            $.cookie('imf_value','');
+            var imf_clc_id = '#' + getCookie('imf_clc_id');
+            var imf_elm = $(imf_clc_id);
+            var imf_val  = getCookie('imf_value');
+            setCookie('imf_clc_id','');
+            setCookie('imf_value','');
             
             // カスタムフィールドに値を入れる
             if (imf_val) {
@@ -224,19 +207,22 @@ jQuery(function($){
                 var media_url = getMediaURL (imf_val);
                 var media_type = getMediaType (media_url);
                 if (media_type) {
-                    $(imf_clc_id).find('input.data')
-                        .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                        .css('padding-left','20px');
-                    $(imf_clc_id).find('a.image').attr('href',media_url).html('<img src="' + media_url + '" width="150" />');
+                    imf_elm
+                        .find('input.data')
+                            .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
+                            .css('padding-left','20px')
+                        .end()
+                        .find('a.image')
+                            .attr('href',media_url)
+                            .html('<img src="' + media_url + '" width="150" />');
                 } else {
-                    $(imf_clc_id).find('input.data').removeAttr('style');          
+                    imf_elm.find('input.data').removeAttr('style');          
                 }
-                $(imf_clc_id).find('img.cancel').attr('src', cancel_png).show();
+                imf_elm.find('img.cancel').attr('src', cancel_png).show();
             }
-
         });
     });
-    // [end]イメージフィールド・ファイルフィールド周りのliveイベントを設定
+    // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [end]
 
     // [start]アップローダーにカスタムフィールド用ボタンを追加
     $('#media-upload #media-items div.media-item').each(function(){
@@ -266,7 +252,7 @@ jQuery(function($){
         attachment_id = attachment_id.replace(/media-item-/,'');
         // 株式会社ウィル用に追加 [ end ]
         var media_url = $(id + ' td.field input.urlfield').val();
-        $.cookie('imf_value',attachment_id + '|' + media_url);
+        $.cookie('imf_value','[' + attachment_id + ']' + media_url);
 
         $('p.ml-submit input:submit').click();
     });
