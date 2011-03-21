@@ -249,20 +249,15 @@ jQuery(function($){
 */
     // アップローダーにカスタムフィールド用ボタンを追加 [end]
 
-    // [start]カスタムフィールドに「URL」を挿入するボタンのイベント
-    $('span.imf_ins_url').live('click', function(){
-        var id = $(this).attr('title');
-        // 株式会社ウィル用に追加 [start]
-        var div = $(this).parents('div.preloaded');
-        var attachment_id = div.attr('id');
-        attachment_id = attachment_id.replace(/media-item-/,'');
-        // 株式会社ウィル用に追加 [ end ]
-        var media_url = $(id + ' td.field input.urlfield').val();
-        $.cookie('imf_value','[' + attachment_id + ']' + media_url);
-
+    // カスタムフィールドに挿入するボタンのイベント [start]
+    $('button.imf_ins_url').live('click', function(){
+        var id = $(this).attr('title').replace(/#media-head-/,'');
+        var media_url = $(this).closest('tr.submit').prevAll('tr.url').find('td.field input.urlfield').val();
+console.log(media_url);
+        setCookie('imf_value','[' + id + ']' + media_url);
         $('p.ml-submit input:submit').click();
     });
-    // [end]カスタムフィールドに「URL」を挿入するボタンのイベント
+    // カスタムフィールドに「URL」を挿入するボタンのイベント [end]
 
     // [start]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
 /*
