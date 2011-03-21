@@ -86,7 +86,8 @@ jQuery(function($){
     function insert_btn (id) {
         var imf_ins_btns = 
 //            '<span title="#' + id + '">カスタムフィールドに挿入 : </span>' + 
-            '<span title="#' + id + '" class="button imf_ins_url">カスタムフィールドに挿入</span><br />';
+            '<button title="#' + id + '" class="button imf_ins_url" type="button">カスタムフィールドに挿入</button>';
+//            '<span title="#' + id + '" class="button imf_ins_url">カスタムフィールドに挿入</span><br />';
 //            '<span title="#' + id + '" class="button imf_ins_img">imgタグ</span>' +
 //            '<span title="#' + id + '" class="button imf_ins_a">aタグ</span><br />';
 
@@ -224,24 +225,29 @@ jQuery(function($){
     });
     // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [end]
 
-    // [start]アップローダーにカスタムフィールド用ボタンを追加
-    $('#media-upload #media-items div.media-item').each(function(){
-        var id = $(this).attr('id');
-        var imf_ins_btns = insert_btn (id);
-        $(this).find('tr.submit td.savesend').prepend(imf_ins_btns);
-        $(this).find('tr.url td.field p.help').before('<button type="button" class="button use_thumb" title="#' + id + '">サムネイルの URL</button>');
+    // アップローダーにカスタムフィールド用ボタンを追加 [start]
+    $('#media-items div.media-item').each(function(){
+        var id = $(this).find('thead').attr('id');
+        $(this).find('tr.submit td.savesend').prepend(insert_btn(id));
+    }).live('mouseover', function(){
+        var id = $(this).find('thead').attr('id');
+        if (!($(this).find('tr.submit td.savesend button.imf_ins_url').length)){
+            $(this).find('tr.submit td.savesend').prepend(insert_btn(id));
+        }
     });
+/*
     $('#media-items').live('mouseover', function(){
         $(this).find('div.media-item').each(function(){
             var id = $(this).attr('id');
             var imf_ins_btns = insert_btn (id);
-            if (!($(this).find('tr.submit td.savesend span.imf_ins_url').length)){
+            if (!($(this).find('tr.submit td.savesend button.imf_ins_url').length)){
                 $(this).find('tr.submit td.savesend').prepend(imf_ins_btns);
                 $(this).find('tr.url td.field p.help').before('<button type="button" class="button use_thumb" title="#' + id + '">サムネイルの URL</button>');
             }
         });
     });
-    // [end]アップローダーにカスタムフィールド用ボタンを追加
+*/
+    // アップローダーにカスタムフィールド用ボタンを追加 [end]
 
     // [start]カスタムフィールドに「URL」を挿入するボタンのイベント
     $('span.imf_ins_url').live('click', function(){
