@@ -253,7 +253,6 @@ jQuery(function($){
     $('button.imf_ins_url').live('click', function(){
         var id = $(this).attr('title').replace(/#media-head-/,'');
         var media_url = $(this).closest('tr.submit').prevAll('tr.url').find('td.field input.urlfield').val();
-console.log(media_url);
         setCookie('imf_value','[' + id + ']' + media_url);
         $('p.ml-submit input:submit').click();
     });
@@ -337,44 +336,52 @@ console.log(media_url);
 */
     // [end]サムネイルのURLを「リンクURL」に挿入
 
-    // [start]管理画面にサムネイルを表示
+    // 管理画面にサムネイルを表示 [start]
     $('div.imagefield').each(function(){  
-        var imf_input = $(this).find('input.data');
-        var imf_cancel = $(this).find('img.cancel');
-        var imf_val = imf_input.val();
+        var div = $(this);
+        var imf_data = div.find('input.data');
+        var imf_val = imf_data.val();
+        var imf_cancel = div.find('img.cancel');
         
         if (imf_val) {
             imf_cancel.attr('src', cancel_png).show();
 
-            var media_url = getMediaURL (imf_val);
-            var media_type = getMediaType (media_url);
+            var media_url = getMediaURL(imf_val);
+            var media_type = getMediaType(media_url);
             
-            imf_input.css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                     .css('padding-left','20px');
-            $(this).find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
+            imf_data.css({
+                'background':'url(' + images_url + media_type + '.png) no-repeat 3px center',
+                'padding-left':'20px'
+            });
+            div.find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
         } else {
-                $(this).find('input.data').removeAttr('style');
+            imf_data.removeAttr('style');
         }
-        
-        imf_input.change(function(){
+
+        imf_data.change(function(){
             var imf_val = $(this).val();
 
             if (imf_val) {
-                getMediaURL (imf_val);
-                getMediaType (media_url);
+                var images_url = getMediaURL(imf_val);
+                var media_type = getMediaType(media_url);
                 $(this)
-                    .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                    .css('padding-left','20px');
-                $(this).nextAll('img.cancel').attr('src', cancel_png).show();
+                    .css({
+                        'background':'url(' + images_url + media_type + '.png) no-repeat 3px center',
+                        'padding-left':'20px'
+                    })
+                    .next('img.cancel').attr('src', cancel_png).show();
             } else {
-                $(this).removeAttr('style');
-                $(this).nextAll('img.cancel').attr('src', '').hide();
+                $(this)
+                    .removeAttr('style')
+                    .nextAll('img.cancel').attr('src', '').hide();
             }
 
-            $(this).next('span').find('a.image').attr('href',media_url).html('<img src="' + media_url + '" width="150" />');
+            $(this)
+                .nextAll('span.thumb')
+                .find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
         });     
     });
-    // [end]管理画面にサムネイルを表示
+    // 管理画面にサムネイルを表示 [end]
 
 
     // [start]「キャンセル」ボタンを押したときの動作の設定
