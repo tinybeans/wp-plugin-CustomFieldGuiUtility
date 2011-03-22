@@ -101,4 +101,26 @@ add_action( 'publish_post', array( 'cfg_utility_class', 'edit_meta_value' ) );
 add_action( 'transition_post_status', array( 'cfg_utility_class', 'edit_meta_value' ) );
   /* transition_post_status:バージョン2.3以上。記事・ページが公開された際、またはステータスが「公開」に変更された場合に実行する。*/
 
+/* Functions */
+function get_imagefield($key) {
+    $imagefield = post_custom($key);
+    $out['id'] = preg_replace('/(\[)([0-9]+)(\])(http.+)/', '$2', $imagefield);
+    $out['url'] = preg_replace('/(\[)([0-9]+)(\])(http.+)/', '$4', $imagefield);
+    return $out;
+}
+
+function get_attachment_object($post_id) {
+    global $wpdb;
+    $attachment = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE ID = $post_id");
+    $post = $attachment;
+    setup_postdata($post);
+    $out['title'] = $post->post_title;
+    $out['url'] = $post->guid;
+    $out['content'] = $post->post_content;
+    $out['excerpt'] = $post->post_excerpt;
+    $out['parent'] = $post->post_parent;
+    $out['mime_type'] = $post->post_mime_type;
+    return $out;
+}
+
 ?>
