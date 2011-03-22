@@ -384,16 +384,22 @@ jQuery(function($){
     // 管理画面にサムネイルを表示 [end]
 
 
-    // [start]「キャンセル」ボタンを押したときの動作の設定
+    // キャンセル」ボタンを押したときの動作の設定 [start]
     $('img.cancel').live('click', function() {
-        $(this).next('span').find('a.image').removeAttr('href');
-        $(this).next('span').find('img').fadeOut('slow',function(){
-            $(this).remove();
-        });
-        $(this).prevAll('input').val('').removeAttr('style');
-        $(this).hide();
+        $(this)
+            .next('span')
+                .find('a.image').removeAttr('href')
+                .end()
+                .find('img').fadeOut('slow', function(){
+                    $(this).remove();
+                })
+                .end()
+            .end()
+            .prev().val('').removeAttr('style')
+            .end()
+            .hide();
     });
-    // [end]「キャンセル」ボタンを押したときの動作の設定
+    // キャンセル」ボタンを押したときの動作の設定 [end]
 
     // [start]必須要素の入力チェック
     var required_boxs = 
