@@ -383,7 +383,6 @@ jQuery(function($){
     });
     // 管理画面にサムネイルを表示 [end]
 
-
     // キャンセル」ボタンを押したときの動作の設定 [start]
     $('img.cancel').live('click', function() {
         $(this)
@@ -493,10 +492,10 @@ jQuery(function($){
             return true;
         }
     });
-    // [end]必須要素の入力チェック
+    // 必須要素の入力チェック [end]
     
-    // [start]フォーカスしたテキストフィールドの初期値を消す
-    $('.postbox.textfield').find('input.data').each(function(){
+    // フォーカスしたテキストフィールドの初期値を消す [start]
+    $('div.postbox.textfield').find('input.data').each(function(){
         $(this).focus(function(){
             var default_val = $(this).attr('title');
             var current_val = $(this).val();
@@ -512,7 +511,7 @@ jQuery(function($){
             }
         });
     });
-    // [end]フォーカスしたテキストフィールドの初期値を消す
+    // フォーカスしたテキストフィールドの初期値を消す [end]
     
     // for facebox.js
     $("a[rel*=facebox]").facebox();
