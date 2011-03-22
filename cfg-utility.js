@@ -249,20 +249,14 @@ jQuery(function($){
 */
     // アップローダーにカスタムフィールド用ボタンを追加 [end]
 
-    // [start]カスタムフィールドに「URL」を挿入するボタンのイベント
-    $('span.imf_ins_url').live('click', function(){
-        var id = $(this).attr('title');
-        // 株式会社ウィル用に追加 [start]
-        var div = $(this).parents('div.preloaded');
-        var attachment_id = div.attr('id');
-        attachment_id = attachment_id.replace(/media-item-/,'');
-        // 株式会社ウィル用に追加 [ end ]
-        var media_url = $(id + ' td.field input.urlfield').val();
-        $.cookie('imf_value','[' + attachment_id + ']' + media_url);
-
+    // カスタムフィールドに挿入するボタンのイベント [start]
+    $('button.imf_ins_url').live('click', function(){
+        var id = $(this).attr('title').replace(/#media-head-/,'');
+        var media_url = $(this).closest('tr.submit').prevAll('tr.url').find('td.field input.urlfield').val();
+        setCookie('imf_value','[' + id + ']' + media_url);
         $('p.ml-submit input:submit').click();
     });
-    // [end]カスタムフィールドに「URL」を挿入するボタンのイベント
+    // カスタムフィールドに「URL」を挿入するボタンのイベント [end]
 
     // [start]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
 /*
@@ -342,56 +336,69 @@ jQuery(function($){
 */
     // [end]サムネイルのURLを「リンクURL」に挿入
 
-    // [start]管理画面にサムネイルを表示
+    // 管理画面にサムネイルを表示 [start]
     $('div.imagefield').each(function(){  
-        var imf_input = $(this).find('input.data');
-        var imf_cancel = $(this).find('img.cancel');
-        var imf_val = imf_input.val();
+        var div = $(this);
+        var imf_data = div.find('input.data');
+        var imf_val = imf_data.val();
+        var imf_cancel = div.find('img.cancel');
         
         if (imf_val) {
             imf_cancel.attr('src', cancel_png).show();
 
-            var media_url = getMediaURL (imf_val);
-            var media_type = getMediaType (media_url);
+            var media_url = getMediaURL(imf_val);
+            var media_type = getMediaType(media_url);
             
-            imf_input.css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                     .css('padding-left','20px');
-            $(this).find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
+            imf_data.css({
+                'background':'url(' + images_url + media_type + '.png) no-repeat 3px center',
+                'padding-left':'20px'
+            });
+            div.find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
         } else {
-                $(this).find('input.data').removeAttr('style');
+            imf_data.removeAttr('style');
         }
-        
-        imf_input.change(function(){
+
+        imf_data.change(function(){
             var imf_val = $(this).val();
 
             if (imf_val) {
-                getMediaURL (imf_val);
-                getMediaType (media_url);
+                var images_url = getMediaURL(imf_val);
+                var media_type = getMediaType(media_url);
                 $(this)
-                    .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                    .css('padding-left','20px');
-                $(this).nextAll('img.cancel').attr('src', cancel_png).show();
+                    .css({
+                        'background':'url(' + images_url + media_type + '.png) no-repeat 3px center',
+                        'padding-left':'20px'
+                    })
+                    .next('img.cancel').attr('src', cancel_png).show();
             } else {
-                $(this).removeAttr('style');
-                $(this).nextAll('img.cancel').attr('src', '').hide();
+                $(this)
+                    .removeAttr('style')
+                    .nextAll('img.cancel').attr('src', '').hide();
             }
 
-            $(this).next('span').find('a.image').attr('href',media_url).html('<img src="' + media_url + '" width="150" />');
+            $(this)
+                .nextAll('span.thumb')
+                .find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
         });     
     });
-    // [end]管理画面にサムネイルを表示
+    // 管理画面にサムネイルを表示 [end]
 
-
-    // [start]「キャンセル」ボタンを押したときの動作の設定
+    // キャンセル」ボタンを押したときの動作の設定 [start]
     $('img.cancel').live('click', function() {
-        $(this).next('span').find('a.image').removeAttr('href');
-        $(this).next('span').find('img').fadeOut('slow',function(){
-            $(this).remove();
-        });
-        $(this).prevAll('input').val('').removeAttr('style');
-        $(this).hide();
+        $(this)
+            .next('span')
+                .find('a.image').removeAttr('href')
+                .end()
+                .find('img').fadeOut('slow', function(){
+                    $(this).remove();
+                })
+                .end()
+            .end()
+            .prev().val('').removeAttr('style')
+            .end()
+            .hide();
     });
-    // [end]「キャンセル」ボタンを押したときの動作の設定
+    // キャンセル」ボタンを押したときの動作の設定 [end]
 
     // [start]必須要素の入力チェック
     var required_boxs = 
@@ -485,10 +492,10 @@ jQuery(function($){
             return true;
         }
     });
-    // [end]必須要素の入力チェック
+    // 必須要素の入力チェック [end]
     
-    // [start]フォーカスしたテキストフィールドの初期値を消す
-    $('.postbox.textfield').find('input.data').each(function(){
+    // フォーカスしたテキストフィールドの初期値を消す [start]
+    $('div.postbox.textfield').find('input.data').each(function(){
         $(this).focus(function(){
             var default_val = $(this).attr('title');
             var current_val = $(this).val();
@@ -504,7 +511,7 @@ jQuery(function($){
             }
         });
     });
-    // [end]フォーカスしたテキストフィールドの初期値を消す
+    // フォーカスしたテキストフィールドの初期値を消す [end]
     
     // for facebox.js
     $("a[rel*=facebox]").facebox();
