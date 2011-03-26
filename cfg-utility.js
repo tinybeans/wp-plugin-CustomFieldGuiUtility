@@ -19,19 +19,6 @@ jQuery(function($){
 
     function getMediaURL (str) {
         return str.replace(/^(\[[0-9]+\])(.+)/,'$2');
-/*
-        var media_url;
-        if (str.match(/^<img/)) {
-            media_url = str.replace(/(<img src=")([^"]+)(".+)/,'$2');
-        } else if (str.match(/^<a/)) {
-            media_url = str.replace(/(<a href=")([^"]+)(".+)/,'$2');
-        } else if (str.match(/^[0-9]/)) {
-            media_url = str.replace(/([0-9]+\|)(.+)/,'$2');
-        } else {
-            media_url = str;
-        }
-        return media_url;
-*/
     }
     
     function getMediaType (str) {
@@ -85,11 +72,7 @@ jQuery(function($){
     
     function insert_btn (id) {
         var imf_ins_btns = 
-//            '<span title="#' + id + '">カスタムフィールドに挿入 : </span>' + 
             '<button title="#' + id + '" class="button imf_ins_url" type="button">カスタムフィールドに挿入</button>';
-//            '<span title="#' + id + '" class="button imf_ins_url">カスタムフィールドに挿入</span><br />';
-//            '<span title="#' + id + '" class="button imf_ins_img">imgタグ</span>' +
-//            '<span title="#' + id + '" class="button imf_ins_a">aタグ</span><br />';
 
         return imf_ins_btns;
     }
@@ -235,18 +218,6 @@ jQuery(function($){
             $(this).find('tr.submit td.savesend').prepend(insert_btn(id));
         }
     });
-/*
-    $('#media-items').live('mouseover', function(){
-        $(this).find('div.media-item').each(function(){
-            var id = $(this).attr('id');
-            var imf_ins_btns = insert_btn (id);
-            if (!($(this).find('tr.submit td.savesend button.imf_ins_url').length)){
-                $(this).find('tr.submit td.savesend').prepend(imf_ins_btns);
-                $(this).find('tr.url td.field p.help').before('<button type="button" class="button use_thumb" title="#' + id + '">サムネイルの URL</button>');
-            }
-        });
-    });
-*/
     // アップローダーにカスタムフィールド用ボタンを追加 [end]
 
     // カスタムフィールドに挿入するボタンのイベント [start]
@@ -257,84 +228,6 @@ jQuery(function($){
         $('p.ml-submit input:submit').click();
     });
     // カスタムフィールドに「URL」を挿入するボタンのイベント [end]
-
-    // [start]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
-/*
-    $('span.imf_ins_img').live('click', function(){
-        var id = $(this).attr('title');
-
-        var media_url = $(id + ' tr.url td.field input.urlfield').val();
-        var media_type = media_url.match(/[a-z]{2,5}$/i);
-        var media_ttl = $(id + ' tr.post_title td.field input').val();
-        var media_exc = $(id + ' tr.post_excerpt td.field input').val();
-        var media_ctt = $(id + ' tr.post_content td.field textarea').val();
-        
-        var media_atr_alt = media_ttl;
-        var media_atr_ttl = '';
-        var media_elm;
-        
-        if (media_exc) {
-            media_atr_alt = media_exc;
-        }
-        if (media_ctt) {
-            media_atr_ttl = ' title="' + media_ctt + '"';
-        }
-        
-        media_elm = '<img src="' + media_url + '" alt="' + media_atr_alt + '"' + media_atr_ttl + ' class="cfg_img" />';
-
-        $.cookie('imf_value',media_elm);
-
-        $('p.ml-submit input:submit').click();
-        
-    });
-*/
-    // [end]カスタムフィールドに「imgタグ」を挿入するボタンのイベント
-    
-    // [start]カスタムフィールドに「aタグ」を挿入するボタンのイベント
-/*
-    $('span.imf_ins_a').live('click', function(){
-        var id = $(this).attr('title');
-        
-        var media_url = $(id + ' tr.url td.field input.urlfield').val();
-        var media_type = media_url.match(/[a-z]{2,5}$/i);
-        var media_ttl = $(id + ' tr.post_title td.field input').val();
-        var media_exc = $(id + ' tr.post_excerpt td.field input').val();
-        var media_ctt = $(id + ' tr.post_content td.field textarea').val();
-        
-        var media_atr_ttl = '';
-        var media_elm;
-        if (media_exc) {
-            media_ttl = media_exc;
-        }
-        if (media_ctt) {
-            media_atr_ttl = ' title="' + media_ctt + '"';
-        }
-        
-        if ((media_type == 'jpg') || (media_type == 'gif') || (media_type == 'png') || (media_type == 'jpeg') || (media_type == 'bmp')) {
-            var thumb_url = get_thumb_url(id);
-            var original_url = $(id + ' tr.url td.field button.urlfile').attr('title');
-            media_elm = '<a href="' + original_url + '"' + media_atr_ttl + ' class="cfg_link"><img src="' + thumb_url + '" alt="' + media_ttl + '" class="cfg_img" /></a>';
-        } else {
-            media_elm = '<a href="' + media_url + '"' + media_atr_ttl + ' class="cfg_link">' + media_ttl + '</a>';
-        }
-
-        $.cookie('imf_value',media_elm);
-
-        $('p.ml-submit input:submit').click();
-        
-    });
-*/
-    // [end]カスタムフィールドに「aタグ」を挿入するボタンのイベント
-
-    // [start]サムネイルのURLを「リンクURL」に挿入
-/*
-    $('tr.url button.use_thumb').live('click', function(){
-        var id = $(this).attr('title');
-        var thumb_url = get_thumb_url(id);
-        $(this).prevAll('input.urlfield').val(thumb_url);
-    });
-*/
-    // [end]サムネイルのURLを「リンクURL」に挿入
 
     // 管理画面にサムネイルを表示 [start]
     $('div.imagefield').each(function(){  
