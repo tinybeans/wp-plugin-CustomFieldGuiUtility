@@ -304,7 +304,7 @@ EOF;
                 return;
             }
 
-            foreach($fields as $title  => $data) {
+            foreach($fields as $title => $data) {
                 $name = 'cfg_' . cfg_utility_class::sanitize_name($title);
                 $title = $wpdb->escape(stripslashes(trim($title)));
                 $meta_value = stripslashes(trim($_REQUEST[ "$name" ]));
@@ -321,6 +321,8 @@ EOF;
                     } elseif ($data['type'] == 'checkbox') {
                         add_post_meta($id, $title, 'true');
                     }
+                } elseif (isset($meta_value) && strval($meta_value) === '0') {
+                    add_post_meta($id, $title, '0');
                 } else {
                     delete_post_meta($id, $title);
                 }
