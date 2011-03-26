@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  *
  * Since:       2008-10-15
- * Last Update: 2010-04-22
+ * Last Update: 2011-03-27
  *
  * jQuery v1.4.4
  * Facebox 1.2
@@ -413,85 +413,96 @@ jQuery(function($){
     });
     
     // 「公開」ボタンを押したときのイベント
-    $('#publishing-action #original_publish, #publishing-action #publish').live('click', function(){
-        var slug = $('#edit-slug-box #sample-permalink').text();
-        if (slug) {
-            var add_height = 0, check = 0;
-            var total_height = getPageScroll()[1] + (getPageHeight() / 20) + 80;
-            
-            $('div.postbox.must:visible').each(function(){
-                $(this).removeAttr('style');
-                
-                var textfield = $(this).hasClass('textfield');
-                var imagefield = $(this).hasClass('imagefield');
-                var filefield = $(this).hasClass('filefield');
-                var checkbox = $(this).hasClass('checkbox');
-                var multi_checkbox = $(this).hasClass('multi_checkbox');
-                var radio = $(this).hasClass('radio');
-                var select = $(this).hasClass('select');
-                var textarea = $(this).hasClass('textarea');
-
-                // テキストフィールド・イメージフィールド・ファイルフィールド・複数選択チェックボックスの入力チェック
-                if (textfield || imagefield || filefield || multi_checkbox || textarea) {
-                    if (!($(this).find('.data').val())) {
-                        $(this).css({'top': total_height}).addClass('required_err requireds');
-                        add_height = $(this).height() + 30;
-                        total_height += add_height;
-                        check = 1;
-                    }
-                }
-    
-                // チェックボックス・ラジオボタンの入力チェック
-                if (checkbox || radio) {
-                    if (!($(this).find('input.data:checked').length)) {
-                        $(this).css({'top': total_height}).addClass('required_err requireds');
-                        add_height = $(this).height() + 30;
-                        total_height += add_height;
-                        check = 1;
-                    }
-                }
-    
-                // セレクトメニューの入力チェック
-                if (select) {
-                    if (!($(this).find('option.data:selected'))) {
-                        $(this).css({'top': total_height}).addClass('required_err requireds');
-                        add_height = $(this).height() + 30;
-                        total_height += add_height;
-                        check = 1;
-                    }
-                }
-            });
-            
-            if (check) {
-                $('#cfg_utility').css(css_static);
-                $('#required_bg').css({'height': $('#wpwrap').height() }).fadeIn();
-                $('#required_box').css({
-                    'top':  getPageScroll()[1] + (getPageHeight() / 20),
-                    'left': '50%',
-                    'height': total_height - getPageScroll()[1] - 30
-                }).fadeIn();
-                
-                $('#adminmenu, #favorite-actions, #side-info-column, #submitdiv, #pagesubmitdiv').css({
-                    'position': 'static'
-                }).addClass('requireds');
-                
-                $(this).css({
-                    'position': 'absolute',
-                    'top':  getPageScroll()[1] + (getPageHeight() / 20) + 30,
-                    'left': '50%',
-                    'margin-left': '200px',
-                    'z-index': '10'
-                }).addClass('requireds');
-                return false;
-            } else {
-                $('.requireds').removeAttr('style');
-                $('#required_bg, #required_box').fadeOut();
-                return true;
-            }
+    var submit_event = true;
+    // 下書き保存やプレビューの場合は必須チェックを行わない
+    $('#post-preview, #save-post').click(function(){
+        submit_event = false;
+        return true;
+    });
+    // Enterで実行されたときのためにボタンへのclickではなくて、formのsubmitイベントで設定
+    $('#post').submit(function(e){
+        // 下書き保存横のローディング画像が表示されていたら必須チェックを行わない
+        if (submit_event && $('#draft-ajax-loading').css('visibility') == 'hidden') {
+            return check_require(e);
         } else {
             return true;
         }
     });
+    
+    function check_require(e){
+        var add_height = 0, check = 0;
+        var total_height = getPageScroll()[1] + (getPageHeight() / 20) + 80;
+        $('div.postbox.must:visible').each(function(){
+            $(this).removeAttr('style');
+            
+            var textfield = $(this).hasClass('textfield');
+            var imagefield = $(this).hasClass('imagefield');
+            var filefield = $(this).hasClass('filefield');
+            var checkbox = $(this).hasClass('checkbox');
+            var multi_checkbox = $(this).hasClass('multi_checkbox');
+            var radio = $(this).hasClass('radio');
+            var select = $(this).hasClass('select');
+            var textarea = $(this).hasClass('textarea');
+
+            // テキストフィールド・イメージフィールド・ファイルフィールド・複数選択チェックボックスの入力チェック
+            if (textfield || imagefield || filefield || multi_checkbox || textarea) {
+                if (!($(this).find('.data').val())) {
+                    $(this).css({'top': total_height}).addClass('required_err requireds');
+                    add_height = $(this).height() + 30;
+                    total_height += add_height;
+                    check = 1;
+                }
+            }
+
+            // チェックボックス・ラジオボタンの入力チェック
+            if (checkbox || radio) {
+                if (!($(this).find('input.data:checked').length)) {
+                    $(this).css({'top': total_height}).addClass('required_err requireds');
+                    add_height = $(this).height() + 30;
+                    total_height += add_height;
+                    check = 1;
+                }
+            }
+
+            // セレクトメニューの入力チェック
+            if (select) {
+                if (!($(this).find('option.data:selected'))) {
+                    $(this).css({'top': total_height}).addClass('required_err requireds');
+                    add_height = $(this).height() + 30;
+                    total_height += add_height;
+                    check = 1;
+                }
+            }
+        });
+        
+        if (check) {
+            $('#cfg_utility').css(css_static);
+            $('#required_bg').css({'height': $('#wpwrap').height() }).fadeIn();
+            $('#required_box').css({
+                'top':  getPageScroll()[1] + (getPageHeight() / 20),
+                'left': '50%',
+                'height': total_height - getPageScroll()[1] - 30
+            }).fadeIn();
+            
+            $('#adminmenu, #favorite-actions, #side-info-column, #submitdiv, #pagesubmitdiv').css({
+                'position': 'static'
+            }).addClass('requireds');
+            
+            $('#publish').css({
+                'position': 'absolute',
+                'top':  getPageScroll()[1] + (getPageHeight() / 20) + 30,
+                'left': '50%',
+                'margin-left': '200px',
+                'z-index': '10'
+            }).addClass('requireds');
+            return false;
+        } else {
+            $('.requireds').removeAttr('style');
+            $('#required_bg, #required_box').fadeOut();
+            return true;
+        }
+
+    }
     // 必須要素の入力チェック [end]
     
     // フォーカスしたテキストフィールドの初期値を消す [start]
