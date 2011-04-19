@@ -3,10 +3,10 @@
 -- This Plugin's Information --------------------------------
   Plugin Name: Custom Field Gui Utility
   Plugin URI: http://www.tinybeans.net/blog/download/wp-plugin/cfg-utility-3.html
-  Description: WordPress 2.9.x のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
+  Description: WordPress 3.1 のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
   Author: Customized by Tomohiro Okuwaki
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.1
+  Version: 3.1.1
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------

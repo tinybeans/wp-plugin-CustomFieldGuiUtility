@@ -4,7 +4,7 @@ Copyright (c)   2005 Joshua Sigar
 Licensed under the MIT License:
 Customize:   Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
 Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
-Last update: 2010-03-19
+Last update: 2011-04-20
 */
 
 class cfg_utility_class {
