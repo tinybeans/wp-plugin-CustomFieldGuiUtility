@@ -15,7 +15,7 @@ class cfg_utility_class {
         return $name;
     }
 
-    function get_custom_fields($suffix) {
+    function get_custom_fields($suffix = '') {
         $suffix = $suffix ? '-' . $suffix : '';
         $file = dirname(__FILE__) . '/conf' . $suffix . '.ini';
         if (!file_exists($file)) {
