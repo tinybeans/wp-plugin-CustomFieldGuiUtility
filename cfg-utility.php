@@ -6,7 +6,7 @@
   Description: WordPress 3.1 のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
   Author: Customized by Tomohiro Okuwaki
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.1.1
+  Version: 3.1.2
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------

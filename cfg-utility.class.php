@@ -235,18 +235,22 @@ EOF;
             value="' . wp_create_nonce('custom-field-gui') . '" />';
 
         foreach ($fields as $title => $data) {
+            $cat_check = TRUE;
             $post_type = 'post';
             $post_id = $_REQUEST['post'];
             if (isset($post_id)) {
                 $post_type = get_post_type($post_id);
-                if ($post_type == 'post' and isset($data['category'])) {
+                if ($post_type == 'post' and isset($data['category']) and $cat_check) {
                     $cat_array = explode(' ', $data['category']);
                     $cats = get_the_category($post_id);
                     foreach ($cats as $cat) {
                         $cat_slug = $cat->slug;
-                        if (!in_array($cat_slug, $cat_array)) {
-                            continue 2;
+                        if (in_array($cat_slug, $cat_array)) {
+                            $cat_check = FALSE;
                         }
+                    }
+                    if ($cat_check) {
+                        continue;
                     }
                 }
             } elseif ($_REQUEST['post_type']){
