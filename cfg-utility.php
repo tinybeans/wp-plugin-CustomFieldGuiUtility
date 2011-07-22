@@ -6,7 +6,7 @@
   Description: WordPress 3.1 のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
   Author: Customized by Tomohiro Okuwaki
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.1.2
+  Version: 3.1.3
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -59,7 +59,6 @@ function insert_head () {
         <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
         <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
         <script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
-        <script type="text/javascript" src="{$plugin_url}cookie.js"></script>
         <script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
 EOF;
     echo $head;
