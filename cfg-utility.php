@@ -33,15 +33,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// カスタムフィールドを入れるボックス名の指定 [start]
-$box_name = 'カスタムフィールド';
-// カスタムフィールドを入れるボックス名の指定 [ end ]
-
-add_action ('admin_head','insert_head');
-
-include_once ('cfg-utility.class.php');
+require_once ('cfg-utility.class.php');
 require_once (ABSPATH . 'wp-admin/includes/template.php');
 
+add_action ('admin_head','insert_head');
 add_action ('add_meta_boxes', 'isert_custom_field_gui');
 
 /* page and custom post type */
