@@ -46,7 +46,7 @@ EOF;
             $value = get_post_meta($_REQUEST['post'], $title);
             $value = $value[0];
         }
-        $value = isset($value) ? attribute_escape($value) : attribute_escape($default);
+        $value = isset($value) ? esc_attr($value) : esc_attr($default);
         $inside = <<< EOF
             <p class="cfg_input">
                 <input class="data" type="text" id="{$name}" name="{$name}" value="{$value}" size="{$size}" title="{$default}" />
@@ -61,7 +61,7 @@ EOF;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
         if (isset($_REQUEST['post'])) {
             $value = get_post_meta($_REQUEST['post'], $title);
-            $value = attribute_escape($value[0]);
+            $value = esc_attr($value[0]);
         }
         $inside = <<< EOF
             <p class="cfg_input">
@@ -82,7 +82,7 @@ EOF;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
         if (isset($_REQUEST['post'])) {
             $value = get_post_meta($_REQUEST['post'], $title);
-            $value = attribute_escape($value[0]);
+            $value = esc_attr($value[0]);
         }
         $inside = <<< EOF
             <p class="cfg_input">
@@ -123,7 +123,7 @@ EOF;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
         if (isset($_REQUEST['post'])) {
             $value = get_post_meta($_REQUEST['post'], $title);
-            $value = attribute_escape($value[0]);
+            $value = esc_attr($value[0]);
         }
         if (!isset($value) and isset($default)) {
             $pattern = '/( |　)*#( |　)*/';
@@ -213,7 +213,7 @@ EOF;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
         if (isset($_REQUEST['post'])) {
             $value = get_post_meta($_REQUEST['post'], $title);
-            $value = attribute_escape($value[0]);
+            $value = esc_attr($value[0]);
         }
         $inside = <<< EOF
             <textarea class="data" id="{$name}" name="{$name}" type="textfield" rows="{$rows}" cols="{$cols}">{$value}</textarea>
