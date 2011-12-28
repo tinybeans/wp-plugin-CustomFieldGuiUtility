@@ -300,7 +300,8 @@ EOF;
             if (!current_user_can('edit_post', $id)) {
                 return $id;
             }
-            if (!wp_verify_nonce($_REQUEST['custom-field-gui-verify-key'], 'custom-field-gui')) {
+            $nonce = isset($_REQUEST['custom-field-gui-verify-key']) ? $_REQUEST['custom-field-gui-verify-key']: '';
+            if (!wp_verify_nonce($nonce, 'custom-field-gui')) {
                 return $id;
             }
             $fields = cfg_utility_class::get_custom_fields();
