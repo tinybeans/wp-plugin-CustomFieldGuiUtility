@@ -15,6 +15,7 @@ class cfg_utility_class {
         return $name;
     }
 
+/*
     function get_custom_fields($suffix = '') {
         $suffix = $suffix ? '-' . $suffix : '';
         $file = dirname(__FILE__) . '/conf' . $suffix . '.ini';
@@ -23,6 +24,17 @@ class cfg_utility_class {
         }
         $custom_fields = parse_ini_file($file, true);
         return $custom_fields;
+    }
+*/
+
+    function make_input ($name, $value, $size, $default, $input_type) {
+        $attr_id = ($name) ? " id='$name'": '';
+        $attr_name = ($name) ? " name='$name'": '';
+        $attr_value = ($value) ? " value='$value'": '';
+        $attr_size = ($size) ? " size='$size'": '';
+        $attr_title = ($default) ? " title='$default'": '';
+        $attr_type = ($input_type) ? " type='$input_type'": '';
+        return '<input '.$attr_id.$attr_name.$attr_value.$attr_title.$attr_type.' placeholder="UNKO!!!"/>';
     }
 
     function make_element ($name, $type, $class, $inside, $sample, $fieldname, $must) {
@@ -38,7 +50,55 @@ class cfg_utility_class {
 EOF;
         return $elm;
     }
-    
+
+    function make_textform (
+        $post_id   = '',
+        $name      = '',
+        $type      = 'post',
+        $class     = '',
+        $default   = '',
+        $size      = 25,
+        $sample    = '',
+        $fieldname = '',
+        $must      = '',
+        $idname    = ''
+    ) {
+        $title = $name;
+        $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
+        $value = get_post_meta($post_id, $title, true);
+        $value = ($value != '') ? esc_attr($value) : esc_attr($default);
+        $input = cfg_utility_class::make_input ($name, $value, $size, $default, 'text');
+        if ($type == 'textfield') {
+            $inside = <<< EOF
+            <p class='cfg_input'>[$post_id]$input</p>
+EOF;
+            $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        } elseif ($type == 'imagefield') {
+            $inside = <<< EOF
+            <p class="cfg_input">
+                $input
+                <img class="cancel" src="" width="16" height="16" style="display:none;" />
+                <span class="thumb" id="{$name}_thumb">
+                    <a href="#" class="image" rel="facebox"></a>
+                </span>
+            </p>
+            <p>画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
+EOF;
+            $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        } elseif ($type == 'filefield') {
+            $inside = <<< EOF
+            <p class="cfg_input">
+                $input
+                <img class="cancel" src="" width="16" height="16" style="display:none;" />
+            </p>
+            <p>ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
+EOF;
+            $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        }
+        return $out;
+    }
+
+/*
     function make_textfield ($name, $type, $class, $default, $size = 25, $sample, $fieldname, $must) {
         $title = $name;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
@@ -55,7 +115,9 @@ EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
+*/
 
+/*
     function make_imagefield ($name, $type, $class, $size = 25, $sample, $fieldname, $must, $idname) {
         $title = $name;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
@@ -76,7 +138,9 @@ EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
+*/
 
+/*
     function make_filefield ($name, $type, $class, $size = 25, $sample, $fieldname, $must, $idname) {
         $title = $name;
         $name = 'cfg_' . cfg_utility_class::sanitize_name($name);
@@ -94,6 +158,7 @@ EOF;
         $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
         return $out;
     }
+*/
 
     function make_checkbox ($name, $type, $class, $default, $sample, $fieldname, $must) {
         $title = $name;
@@ -226,6 +291,135 @@ EOF;
         return '<h5 class="postbox_hr ' . $class . '">' . $fieldname . '</h5>';
     }
 
+    function insert_gui ($obj) {
+        $post_type = 'post';
+        $post_id = '';
+        if (is_object($obj)) {
+            $post_type = $obj->post_type;
+            $post_id = $obj->ID;
+        }
+
+        print('<pre>');
+        var_dump($obj);
+        print('</pre>');
+    
+        /* 設定ファイルの取得と変換 */
+        $file_path = dirname(__FILE__) . '/conf-' . $post_type . '.ini';
+        if (! file_exists($file_path)) {
+            $file_path = dirname(__FILE__) . '/conf.ini';
+            if (! file_exists($file_path)) {
+                return;
+            }
+        }
+        $fields = parse_ini_file($file_path, true);
+        if ($fields == null) {
+            return;
+        }
+    
+        /* nonceを設定する */
+        $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" />Good Job!!';
+
+        print('<pre>');
+        var_dump($fields);
+        print('</pre>');
+
+        foreach ($fields as $title => $data) {
+            $cat_check = TRUE;
+/*
+            if (($post_id != '') and ($post_type == 'post') and isset($data['category']) and $cat_check) {
+                $cat_array = explode(' ', $data['category']);
+                $cats = get_the_category($post_id);
+                foreach ($cats as $cat) {
+                    $cat_slug = $cat->slug;
+                    if (in_array($cat_slug, $cat_array)) {
+                        $cat_check = FALSE;
+                    }
+                }
+                if ($cat_check) {
+                    continue;
+                }
+            }
+            $class_array = explode(' ',$data['class']);
+            if (!in_array($post_type, $class_array)) {
+                continue;
+            }
+*/
+/*
+                $params = array(
+                    $post_id,
+                    $title,
+                    $data['type'],
+                    $data['class'],
+                    $data['default'],
+                    $data['size'],
+                    $data['sample'],
+                    $data['fieldname'],
+                    $data['must'],
+                    $data['idname']
+                );
+*/
+            /* パラメーター */
+            $data_type      = isset($data['type'])      ? $data['type']:      NULL;
+            $data_class     = isset($data['class'])     ? $data['class']:     NULL;
+            $data_default   = isset($data['default'])   ? $data['default']:   NULL;
+            $data_size      = isset($data['size'])      ? $data['size']:      NULL;
+            $data_sample    = isset($data['sample'])    ? $data['sample']:    NULL;
+            $data_fieldname = isset($data['fieldname']) ? $data['fieldname']: NULL;
+            $data_must      = isset($data['must'])      ? $data['must']:      NULL;
+            $data_idname    = isset($data['idname'])    ? $data['idname']:    NULL;
+
+            if ($data['type'] == 'textfield') {
+                $out .= cfg_utility_class::make_textform(
+                    $post_id,
+                    $title,
+                    $data_type,
+                    $data_class,
+                    $data_default,
+                    $data_size,
+                    $data_sample,
+                    $data_fieldname,
+                    $data_must,
+                    ''/* $data_idname */
+            );
+            } elseif ($data['type'] == 'imagefield' or $data['type'] == 'filefield') {
+                $out .= cfg_utility_class::make_textform(
+                    $post_id,
+                    $title,
+                    $data_type,
+                    $data_class,
+                    $data_default,
+                    $data_size,
+                    $data_sample,
+                    $data_fieldname,
+                    $data_must,
+                    $data_idname
+                );
+            } elseif ($data['type'] == 'checkbox') {
+                $out .= 
+                    cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            } elseif ($data['type'] == 'multi_checkbox') {
+                $out .= 
+                    cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            } elseif ($data['type'] == 'radio') {
+                $out .= 
+                    cfg_utility_class::make_radio(
+                        $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            } elseif ($data['type'] == 'select') {
+                $out .= 
+                    cfg_utility_class::make_select(
+                        $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            } elseif ($data['type'] == 'textarea') {
+                $out .= 
+                    cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
+            } elseif ($data['type'] == 'hr') {
+                $out .= 
+                    cfg_utility_class::make_hr($data['class'], $data['fieldname']);
+            }
+        }
+        echo $out;
+    }
+
+/*
     function insert_gui() {
         $fields = cfg_utility_class::get_custom_fields();
         if ($fields == null) {
@@ -237,7 +431,7 @@ EOF;
         foreach ($fields as $title => $data) {
             $cat_check = TRUE;
             $post_type = 'post';
-            $post_id = $_REQUEST['post'];
+            $post_id = isset($_REQUEST['post']) ? $_REQUEST['post'] : '';
             if (isset($post_id)) {
                 $post_type = get_post_type($post_id);
                 if ($post_type == 'post' and isset($data['category']) and $cat_check) {
@@ -290,6 +484,7 @@ EOF;
         }
         echo $out;
     }
+*/
 
     function edit_meta_value($id) {
         if ($id != 0) {

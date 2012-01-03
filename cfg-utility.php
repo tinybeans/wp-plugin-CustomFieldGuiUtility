@@ -71,17 +71,18 @@ add_action( 'transition_post_status', array( 'cfg_utility_class', 'edit_meta_val
 function insert_head () {
     $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
     $head = <<< EOD
-<link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
-<link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
-<script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
-<script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
+    <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
+    <script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
+    <script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
 EOD;
     echo $head;
 }
 
 function isert_custom_field_gui ($post_type = 'post', $post = NULL) {
-    add_meta_box('cfg_utility', get_field_title(FALSE), 'insert_gui', $post_type, 'normal', 'high');
+    add_meta_box('cfg_utility', get_field_title(FALSE), array('cfg_utility_class','insert_gui'), $post_type, 'normal', 'high');
 }
+
 
 function get_field_title ($enable) {
     $file = dirname(__FILE__) . '/conf.ini';
@@ -91,80 +92,6 @@ function get_field_title ($enable) {
         $title = 'カスタムフィールド';
     }
     return $title;
-}
-
-function insert_gui () {
-    $out = '<srtong style="font-weight:bold;color:red;">Good Job !</srtong>';
-/*
-    $file_path = dirname(__FILE__) . '/conf' . $suffix . '.ini';
-    if (!file_exists($file)) {
-        return null;
-    }
-    $custom_fields = parse_ini_file($file, true);
-
-    $fields = cfg_utility_class::get_custom_fields();
-    if ($fields == null) {
-        return;
-    }
-    $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key"
-        value="' . wp_create_nonce('custom-field-gui') . '" />';
-
-    foreach ($fields as $title => $data) {
-        $cat_check = TRUE;
-        $post_type = 'post';
-        $post_id = isset($_REQUEST['post']) ? $_REQUEST['post'] : '';
-        if (isset($post_id)) {
-            $post_type = get_post_type($post_id);
-            if ($post_type == 'post' and isset($data['category']) and $cat_check) {
-                $cat_array = explode(' ', $data['category']);
-                $cats = get_the_category($post_id);
-                foreach ($cats as $cat) {
-                    $cat_slug = $cat->slug;
-                    if (in_array($cat_slug, $cat_array)) {
-                        $cat_check = FALSE;
-                    }
-                }
-                if ($cat_check) {
-                    continue;
-                }
-            }
-        } elseif ($_REQUEST['post_type']){
-            $post_type = $_REQUEST['post_type'];
-        }
-        $class_array = explode(' ',$data['class']);
-        if (!in_array($post_type, $class_array)) {
-            continue;
-        }
-        if ($data['type'] == 'textfield') {
-            $out .= cfg_utility_class::make_textfield($title, $data['type'], $data['class'], $data['default'], $data['size'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'imagefield') {
-            $out .= cfg_utility_class::make_imagefield($title, $data['type'], $data['class'], $data['size'], $data['sample'], $data['fieldname'], $data['must'], $data['idname']);
-        } elseif ($data['type'] == 'filefield') {
-            $out .= cfg_utility_class::make_filefield($title, $data['type'], $data['class'], $data['size'], $data['sample'], $data['fieldname'], $data['must'], $data['idname']);
-        } elseif ($data['type'] == 'checkbox') {
-            $out .= 
-                cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'multi_checkbox') {
-            $out .= 
-                cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'radio') {
-            $out .= 
-                cfg_utility_class::make_radio(
-                    $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'select') {
-            $out .= 
-                cfg_utility_class::make_select(
-                    $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'textarea') {
-            $out .= 
-                cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'hr') {
-            $out .= 
-                cfg_utility_class::make_hr($data['class'], $data['fieldname']);
-        }
-    }
-*/
-    echo $out;
 }
 
 /*************
