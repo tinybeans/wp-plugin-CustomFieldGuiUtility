@@ -64,9 +64,9 @@ add_action( 'publish_post', array( 'cfg_utility_class', 'edit_meta_value' ) );
 add_action( 'transition_post_status', array( 'cfg_utility_class', 'edit_meta_value' ) );
   /* transition_post_status:バージョン2.3以上。記事・ページが公開された際、またはステータスが「公開」に変更された場合に実行する。*/
 
-/****************
-   Main Scripts
- ****************/
+/******************
+   Functions(main)
+ ******************/
 
 function insert_head () {
     $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
@@ -80,22 +80,35 @@ EOD;
 }
 
 function isert_custom_field_gui ($post_type = 'post', $post = NULL) {
-    add_meta_box('cfg_utility', get_field_title(FALSE), array('cfg_utility_class','insert_gui'), $post_type, 'normal', 'high');
+    add_meta_box('cfg_utility', get_field_title($post_type), array('cfg_utility_class','insert_gui'), $post_type, 'normal', 'high');
 }
 
-
-function get_field_title ($enable) {
-    $file = dirname(__FILE__) . '/conf.ini';
-    $arry = file($file);
-    $title = preg_replace('/^;\s/', '', $arry[0]);
-    if (! $enable) {
-        $title = 'カスタムフィールド';
+/* 設定ファイルの取得と変換 */
+function get_conf_ini ($post_type) {
+    $file_path = dirname(__FILE__) . '/conf-' . $post_type . '.ini';
+    if (! file_exists($file_path)) {
+        $file_path = dirname(__FILE__) . '/conf.ini';
+        if (! file_exists($file_path)) {
+            user_error('Custom Field GUI Utility の設定ファイルが見つかりません。設定ファイルを設置するか、同プラグインを無効化してください。', E_USER_ERROR);
+            return false;
+        }
     }
-    return $title;
+    $conf = parse_ini_file($file_path, true);
+    return $conf;
+}
+
+/* カスタムフィールドのボックス名を取得 */
+function get_field_title ($post_type) {
+    $conf = get_conf_ini($post_type);
+    if ($conf and isset($conf['cfgu_setting']['boxname'])) {
+        return $conf['cfgu_setting']['boxname'];
+    } else {
+        return 'カスタムフィールド';
+    }
 }
 
 /*************
-   Functions
+   Functions(Template)
  *************/
 function get_imagefield($key) {
     $imagefield = post_custom($key);
