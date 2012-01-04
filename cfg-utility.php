@@ -245,6 +245,17 @@ function sanitize_name($meta_key) {
     return $meta_key;
 }
 
+/* input[type=text]要素を生成する */
+function make_input ($meta_key, $value, $size, $default, $input_type) {
+    $attr_id = ($meta_key) ? " id='$meta_key'": '';
+    $attr_name = ($meta_key) ? " name='$meta_key'": '';
+    $attr_value = ($value) ? " value='$value'": '';
+    $attr_size = ($size) ? " size='$size'": '';
+    $attr_title = ($default) ? " title='$default'": '';
+    $attr_type = ($input_type) ? " type='$input_type'": '';
+    return '<input '.$attr_id.$attr_name.$attr_value.$attr_title.$attr_type.' placeholder="UNKO!!!"/>';
+}
+
 /*************
    Functions(Template)
  *************/
