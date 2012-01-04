@@ -238,6 +238,13 @@ if ($okuwaki) {
     echo $out;
 }
 
+/* カスタムフィールドのキーのサニタイズ */
+function sanitize_name($meta_key) {
+    $meta_key = sanitize_title($meta_key); // taken from WP's wp-includes/functions-formatting.php
+    $meta_key = str_replace('-', '_', $meta_key);
+    return $meta_key;
+}
+
 /*************
    Functions(Template)
  *************/
