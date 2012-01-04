@@ -49,19 +49,19 @@ if ($cur_post_type){
 }
 
 /* post and page */
-add_action( 'edit_post', array( 'cfg_utility_class', 'edit_meta_value' ) );
+add_action('edit_post', 'edit_meta_value');
   /* edit_post:投稿記事またはページが更新・編集された際に実行する。これには、コメントが追加・更新された場合（投稿またはページのコメント数が更新される）も含む。*/
 
 /* post and page */
-add_action( 'save_post', array( 'cfg_utility_class', 'edit_meta_value' ) );
+add_action('save_post', 'edit_meta_value');
   /* save_post:インポート機能の利用、記事・ページ編集フォームの利用、XMLRPCでの投稿、メールでの投稿のうちいずれかの方法で記事・ページが作成・更新された際に実行する。*/
 
 /* post */
-add_action( 'publish_post', array( 'cfg_utility_class', 'edit_meta_value' ) );
+add_action('publish_post', 'edit_meta_value');
   /* publish_post:投稿記事が公開された際、または公開済みの記事の情報が編集された際に実行する。*/
 
 /* page */
-add_action( 'transition_post_status', array( 'cfg_utility_class', 'edit_meta_value' ) );
+add_action('transition_post_status', 'edit_meta_value');
   /* transition_post_status:バージョン2.3以上。記事・ページが公開された際、またはステータスが「公開」に変更された場合に実行する。*/
 
 /******************
@@ -116,7 +116,7 @@ function insert_gui ($obj) {
     print('</pre>');
 
     $post_type = 'post';
-    $post_id = NULL;
+    $post_id = 0;
     if (is_object($obj)) {
         $post_type = $obj->post_type;
         $post_id = $obj->ID;
@@ -135,7 +135,7 @@ function insert_gui ($obj) {
     /* nonceを設定する */
     $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" /><strong style="font-weight:bold;color:red;">Good Job!!</strong>';
 
-    foreach ($fields as $title => $data) {
+    foreach ($fields as $meta_key => $data) {
         $cat_check = TRUE;
 /*
         if (($post_id != '') and ($post_type == 'post') and isset($data['category']) and $cat_check) {
@@ -173,28 +173,22 @@ function insert_gui ($obj) {
         /* パラメーター */
         $param = array(
             'post_id' => $post_id,
-            'meta_key' => $title,
-            'type' => isset($data['type']) ? $data['type']: NULL,
-            'class' => isset($data['class']) ? $data['class']: NULL,
-            'default' => isset($data['default']) ? $data['default']: NULL,
-            'size' => isset($data['size']) ? $data['size']: NULL,
-            'sample' => isset($data['sample']) ? $data['sample']: NULL,
-            'fieldname' => isset($data['fieldname']) ? $data['fieldname']: NULL,
-            'must' => isset($data['must']) ? $data['must']: NULL,
-            'rows' => isset($data['rows']) ? $data['rows']: NULL,
-            'cols' => isset($data['cols']) ? $data['cols']: NULL,
-            'values' => isset($data['value']) ? explode('#', $data['value']): NULL
+            'meta_key' => $meta_key,
+            'type' => isset($data['type']) ? $data['type']: 'post',
+            'class' => isset($data['class']) ? $data['class']: '',
+            'default' => isset($data['default']) ? $data['default']: '',
+            'size' => isset($data['size']) ? $data['size']: 25,
+            'sample' => isset($data['sample']) ? $data['sample']: '',
+            'fieldname' => isset($data['fieldname']) ? $data['fieldname']: '',
+            'must' => isset($data['must']) ? $data['must']: '',
+            'rows' => isset($data['rows']) ? $data['rows']: '',
+            'cols' => isset($data['cols']) ? $data['cols']: '',
+            'values' => isset($data['value']) ? explode('#', $data['value']): ''
         );
     print('<pre> $param =====<br>');
     var_dump($param);
     print('</pre>');
-        $data_type      = isset($data['type'])      ? $data['type']:      NULL;
-        $data_class     = isset($data['class'])     ? $data['class']:     NULL;
-        $data_default   = isset($data['default'])   ? $data['default']:   NULL;
-        $data_size      = isset($data['size'])      ? $data['size']:      NULL;
-        $data_sample    = isset($data['sample'])    ? $data['sample']:    NULL;
-        $data_fieldname = isset($data['fieldname']) ? $data['fieldname']: NULL;
-        $data_must      = isset($data['must'])      ? $data['must']:      NULL;
+        $data_type = $param['type'];
 
         if ($data_type == 'textfield' or $data_type == 'imagefield' or $data_type == 'filefield') {
             $out .= make_textform($param);
@@ -478,6 +472,8 @@ function make_textarea($param) {
 
     if (!empty($meta_value)) {
         $value = esc_attr($meta_value);
+    } else {
+        $value = esc_attr($default);
     }
     $inside = <<< EOF
         <textarea class="data" id="{$name}" name="{$name}" type="textfield" rows="{$rows}" cols="{$cols}">{$value}</textarea>
@@ -493,6 +489,51 @@ function make_hr($param) {
     $fieldname = $param['fieldname'];
 
     return '<h5 class="postbox_hr ' . $class . '">' . $fieldname . '</h5>';
+}
+
+function edit_meta_value($post_id) {
+    if ($post_id == 0) {
+        return $post_id;
+    }
+    global $wpdb;
+    if (!current_user_can('edit_post', $post_id)) {
+        return $post_id;
+    }
+    $nonce = isset($_REQUEST['custom-field-gui-verify-key']) ? $_REQUEST['custom-field-gui-verify-key']: '';
+    if (!wp_verify_nonce($nonce, 'custom-field-gui')) {
+        return $post_id;
+    }
+    global $post;
+    $fields = get_conf_ini($post->post_type);
+    if (!$fields) {
+        return $post_id;
+    }
+    foreach($fields as $meta_key => $data) {
+        $name = 'cfg_' . sanitize_name($meta_key);
+        $data_type = isset($data['type']) ? $data['type']: '';
+        if ($data_type == 'hr' or $meta_key == 'cfgu_setting') {
+            continue;
+        }
+        $meta_value = isset($_REQUEST["$name"]) ? stripslashes(trim($_REQUEST["$name"])): '';
+        if (isset($meta_value) && !empty($meta_value)) {
+            delete_post_meta($post_id, $meta_key);
+            if ($data_type == 'textfield' || 
+                $data_type == 'imagefield' || 
+                $data_type == 'filefield' || 
+                $data_type == 'multi_checkbox' ||
+                $data_type == 'radio'  ||
+                $data_type == 'select' || 
+                $data_type == 'textarea') {
+                add_post_meta($post_id, $meta_key, $meta_value);
+            } elseif ($data['type'] == 'checkbox') {
+                add_post_meta($post_id, $meta_key, 'true');
+            }
+        } elseif (isset($meta_value) && strval($meta_value) === '0') {
+            add_post_meta($post_id, $meta_key, '0');
+        } else {
+            delete_post_meta($post_id, $meta_key);
+        }
+    }
 }
 
 /*************
