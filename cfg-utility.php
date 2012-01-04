@@ -82,7 +82,7 @@ EOD;
 
 /* add_meta_boxesで実行する関数 */
 function isert_custom_field_gui ($post_type = 'post', $post = NULL) {
-    add_meta_box('cfg_utility', get_field_title($post_type), array('cfg_utility_class','insert_gui'), $post_type, 'normal', 'high');
+    add_meta_box('cfg_utility', get_field_title($post_type), 'insert_gui', $post_type, 'normal', 'high');
 }
 
 /* 設定ファイルの取得と変換 */
@@ -107,6 +107,135 @@ function get_field_title ($post_type) {
     } else {
         return 'カスタムフィールド';
     }
+}
+
+/* カスタムフィールドを挿入するメインの関数 */
+function insert_gui ($obj) {
+    print('<pre> $obj =====<br>');
+    var_dump($obj);
+    print('</pre>');
+
+    $post_type = 'post';
+    $post_id = NULL;
+    if (is_object($obj)) {
+        $post_type = $obj->post_type;
+        $post_id = $obj->ID;
+    }
+
+    /* 設定ファイルの取得と変換 */
+    $fields = get_conf_ini($post_type);
+    if (!$fields) {
+        return;
+    }
+
+    print('<pre> $fields =====<br>');
+    var_dump($fields);
+    print('</pre>');
+
+    /* nonceを設定する */
+    $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" /><strong style="font-weight:bold;color:red;">Good Job!!</strong>';
+
+$okuwaki = NULL;
+if ($okuwaki) {
+
+    foreach ($fields as $title => $data) {
+        $cat_check = TRUE;
+/*
+        if (($post_id != '') and ($post_type == 'post') and isset($data['category']) and $cat_check) {
+            $cat_array = explode(' ', $data['category']);
+            $cats = get_the_category($post_id);
+            foreach ($cats as $cat) {
+                $cat_slug = $cat->slug;
+                if (in_array($cat_slug, $cat_array)) {
+                    $cat_check = FALSE;
+                }
+            }
+            if ($cat_check) {
+                continue;
+            }
+        }
+        $class_array = explode(' ',$data['class']);
+        if (!in_array($post_type, $class_array)) {
+            continue;
+        }
+*/
+/*
+            $params = array(
+                $post_id,
+                $title,
+                $data['type'],
+                $data['class'],
+                $data['default'],
+                $data['size'],
+                $data['sample'],
+                $data['fieldname'],
+                $data['must'],
+                $data['idname']
+            );
+*/
+        /* パラメーター */
+        $data_type      = isset($data['type'])      ? $data['type']:      NULL;
+        $data_class     = isset($data['class'])     ? $data['class']:     NULL;
+        $data_default   = isset($data['default'])   ? $data['default']:   NULL;
+        $data_size      = isset($data['size'])      ? $data['size']:      NULL;
+        $data_sample    = isset($data['sample'])    ? $data['sample']:    NULL;
+        $data_fieldname = isset($data['fieldname']) ? $data['fieldname']: NULL;
+        $data_must      = isset($data['must'])      ? $data['must']:      NULL;
+        $data_idname    = isset($data['idname'])    ? $data['idname']:    NULL;
+
+        if ($data['type'] == 'textfield') {
+            $out .= cfg_utility_class::make_textform(
+                $post_id,
+                $title,
+                $data_type,
+                $data_class,
+                $data_default,
+                $data_size,
+                $data_sample,
+                $data_fieldname,
+                $data_must,
+                ''/* $data_idname */
+        );
+        } elseif ($data['type'] == 'imagefield' or $data['type'] == 'filefield') {
+            $out .= cfg_utility_class::make_textform(
+                $post_id,
+                $title,
+                $data_type,
+                $data_class,
+                $data_default,
+                $data_size,
+                $data_sample,
+                $data_fieldname,
+                $data_must,
+                $data_idname
+            );
+        } elseif ($data['type'] == 'checkbox') {
+            $out .= 
+                cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+        } elseif ($data['type'] == 'multi_checkbox') {
+            $out .= 
+                cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+        } elseif ($data['type'] == 'radio') {
+            $out .= 
+                cfg_utility_class::make_radio(
+                    $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+        } elseif ($data['type'] == 'select') {
+            $out .= 
+                cfg_utility_class::make_select(
+                    $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+        } elseif ($data['type'] == 'textarea') {
+            $out .= 
+                cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
+        } elseif ($data['type'] == 'hr') {
+            $out .= 
+                cfg_utility_class::make_hr($data['class'], $data['fieldname']);
+        }
+    }
+
+}/* if $okuwaki */
+
+
+    echo $out;
 }
 
 /*************
