@@ -68,6 +68,7 @@ add_action( 'transition_post_status', array( 'cfg_utility_class', 'edit_meta_val
    Functions(main)
  ******************/
 
+/* 管理画面のhead要素でCSSとJavaScriptファイルの読み込み */
 function insert_head () {
     $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
     $head = <<< EOD
@@ -79,6 +80,7 @@ EOD;
     echo $head;
 }
 
+/* add_meta_boxesで実行する関数 */
 function isert_custom_field_gui ($post_type = 'post', $post = NULL) {
     add_meta_box('cfg_utility', get_field_title($post_type), array('cfg_utility_class','insert_gui'), $post_type, 'normal', 'high');
 }
