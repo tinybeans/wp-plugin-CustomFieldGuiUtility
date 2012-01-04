@@ -183,7 +183,7 @@ if ($okuwaki) {
         $data_must      = isset($data['must'])      ? $data['must']:      NULL;
         $data_idname    = isset($data['idname'])    ? $data['idname']:    NULL;
 
-        if ($data['type'] == 'textfield') {
+        if ($data_type == 'textfield') {
             $out .= cfg_utility_class::make_textform(
                 $post_id,
                 $title,
@@ -196,7 +196,7 @@ if ($okuwaki) {
                 $data_must,
                 ''/* $data_idname */
         );
-        } elseif ($data['type'] == 'imagefield' or $data['type'] == 'filefield') {
+        } elseif ($data_type == 'imagefield' or $data_type == 'filefield') {
             $out .= cfg_utility_class::make_textform(
                 $post_id,
                 $title,
@@ -209,24 +209,24 @@ if ($okuwaki) {
                 $data_must,
                 $data_idname
             );
-        } elseif ($data['type'] == 'checkbox') {
+        } elseif ($data_type == 'checkbox') {
             $out .= 
                 cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'multi_checkbox') {
+        } elseif ($data_type == 'multi_checkbox') {
             $out .= 
                 cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'radio') {
+        } elseif ($data_type == 'radio') {
             $out .= 
                 cfg_utility_class::make_radio(
                     $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'select') {
+        } elseif ($data_type == 'select') {
             $out .= 
                 cfg_utility_class::make_select(
                     $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'textarea') {
+        } elseif ($data_type == 'textarea') {
             $out .= 
                 cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
-        } elseif ($data['type'] == 'hr') {
+        } elseif ($data_type == 'hr') {
             $out .= 
                 cfg_utility_class::make_hr($data['class'], $data['fieldname']);
         }
