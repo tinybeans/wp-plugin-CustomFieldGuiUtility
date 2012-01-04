@@ -271,6 +271,63 @@ EOF;
     return $elm;
 }
 
+/* input[type=text]系のカスタムフィールドのボックスの中身を生成する */
+function make_textform (
+    $post_id   = 0,
+    $meta_key  = NULL,
+    $type      = 'post',
+    $class     = NULL,
+    $default   = NULL,
+    $size      = 25,
+    $sample    = NULL,
+    $fieldname = NULL,
+    $must      = NULL,
+    $idname    = NULL
+) {
+    print('<pre> $post_id =====<br>');
+    var_dump($post_id);
+    print('</pre>');
+
+    $name = 'cfg_' . sanitize_name($meta_key);
+    $value = get_post_meta($post_id, $meta_key, true);
+    if (!empty($value)) {
+        $value = esc_attr($value);
+    } elseif (!empty($default)) {
+        $value = esc_attr($default);
+    } else {
+        $value = '';
+    }
+    $input = make_input ($name, $value, $size, $default, 'text');
+    if ($type == 'textfield') {
+        $inside = <<< EOF
+        <p class='cfg_input'>$input</p>
+EOF;
+        $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    } elseif ($type == 'imagefield') {
+        $inside = <<< EOF
+        <p class="cfg_input">
+            $input
+            <img class="cancel" src="" width="16" height="16" style="display:none;" />
+            <span class="thumb" id="{$name}_thumb">
+                <a href="#" class="image" rel="facebox"></a>
+            </span>
+        </p>
+        <p>画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
+EOF;
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    } elseif ($type == 'filefield') {
+        $inside = <<< EOF
+        <p class="cfg_input">
+            $input
+            <img class="cancel" src="" width="16" height="16" style="display:none;" />
+        </p>
+        <p>ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
+EOF;
+        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    }
+    return $out;
+}
+
 /*************
    Functions(Template)
  *************/
