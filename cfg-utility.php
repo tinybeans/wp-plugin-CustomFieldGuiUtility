@@ -184,7 +184,6 @@ if ($okuwaki) {
             'sample' => isset($data['sample']) ? $data['sample']: NULL,
             'fieldname' => isset($data['fieldname']) ? $data['fieldname']: NULL,
             'must' => isset($data['must']) ? $data['must']: NULL,
-            'idname' => isset($data['idname']) ? $data['idname']: NULL,
             'value' => isset($data['value']) ? $data['value']: NULL
         );
     print('<pre> $param =====<br>');
@@ -197,26 +196,11 @@ if ($okuwaki) {
         $data_sample    = isset($data['sample'])    ? $data['sample']:    NULL;
         $data_fieldname = isset($data['fieldname']) ? $data['fieldname']: NULL;
         $data_must      = isset($data['must'])      ? $data['must']:      NULL;
-        $data_idname    = isset($data['idname'])    ? $data['idname']:    NULL;
 
-        if ($data_type == 'textfield') {
+        if ($data_type == 'textfield' or $data_type == 'imagefield' or $data_type == 'filefield') {
             $out .= make_textform($param);
-        } elseif ($data_type == 'imagefield' or $data_type == 'filefield') {
-            $out .= make_textform(
-                $post_id,
-                $title,
-                $data_type,
-                $data_class,
-                $data_default,
-                $data_size,
-                $data_sample,
-                $data_fieldname,
-                $data_must,
-                $data_idname
-            );
         } elseif ($data_type == 'checkbox') {
-            $out .= 
-                make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            $out .= make_checkbox($param);
         } elseif ($data_type == 'multi_checkbox') {
             $out .= 
                 make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
@@ -333,6 +317,40 @@ EOF;
     }
     return $out;
 }
+
+/* input[type=checkbox]系のカスタムフィールドのボックスの中身を生成する */
+function make_checkbox ($param) {
+
+    $post_id   = $param['post_id'];
+    $meta_key  = $param['meta_key'];
+    $type      = $param['type'];
+    $class     = $param['class'];
+    $default   = $param['default'];
+    $sample    = $param['sample'];
+    $fieldname = $param['fieldname'];
+    $must      = $param['must'];
+
+    $name = 'cfg_' . cfg_utility_class::sanitize_name($meta_key);
+    $meta_value = get_post_meta($post_id, $meta_key);
+    if (!empty($meta_value)) {
+        $checked = ' checked="checked"';
+    } elseif (!empty($default) and trim($default) == 'checked') {
+        $checked = ' checked="checked"';
+    } else {
+        $checked = '';
+    }
+    $inside = <<< EOF
+        <p class="cfg_input">
+            <label class="select" for="{$name}">
+                <input class="checkbox data" name="{$name}" value="true" id="{$name}"{$checked} type="checkbox" />
+                {$sample}
+            </label>
+        </p>
+EOF;
+    $out = make_element ($name, 'checkboxs', $class, $inside, $sample, $fieldname, $must);
+    return $out;
+}
+
 
 /*************
    Functions(Template)
