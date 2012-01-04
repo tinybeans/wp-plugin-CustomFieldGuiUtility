@@ -135,9 +135,6 @@ function insert_gui ($obj) {
     /* nonceを設定する */
     $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" /><strong style="font-weight:bold;color:red;">Good Job!!</strong>';
 
-$okuwaki = NULL;
-if ($okuwaki) {
-
     foreach ($fields as $title => $data) {
         $cat_check = TRUE;
 /*
@@ -184,7 +181,9 @@ if ($okuwaki) {
             'sample' => isset($data['sample']) ? $data['sample']: NULL,
             'fieldname' => isset($data['fieldname']) ? $data['fieldname']: NULL,
             'must' => isset($data['must']) ? $data['must']: NULL,
-            'value' => isset($data['value']) ? $data['value']: NULL
+            'rows' => isset($data['rows']) ? $data['rows']: NULL,
+            'cols' => isset($data['cols']) ? $data['cols']: NULL,
+            'values' => isset($data['value']) ? explode('#', $data['value']): NULL
         );
     print('<pre> $param =====<br>');
     var_dump($param);
@@ -202,28 +201,17 @@ if ($okuwaki) {
         } elseif ($data_type == 'checkbox') {
             $out .= make_checkbox($param);
         } elseif ($data_type == 'multi_checkbox') {
-            $out .= 
-                make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            $out .= make_multi_checkbox($param);
         } elseif ($data_type == 'radio') {
-            $out .= 
-                make_radio(
-                    $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            $out .= make_radio($param);
         } elseif ($data_type == 'select') {
-            $out .= 
-                make_select(
-                    $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+            $out .= make_select($param);
         } elseif ($data_type == 'textarea') {
-            $out .= 
-                make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
+            $out .= make_textarea($param);
         } elseif ($data_type == 'hr') {
-            $out .= 
-                make_hr($data['class'], $data['fieldname']);
+            $out .= make_hr($param);
         }
     }
-
-}/* if $okuwaki */
-
-
     echo $out;
 }
 
@@ -272,16 +260,15 @@ function make_textform ($param) {
     $sample    = $param['sample'];
     $fieldname = $param['fieldname'];
     $must      = $param['must'];
-    $idname    = $param['idname'];
 
     print('<pre> $post_id =====<br>');
     var_dump($post_id);
     print('</pre>');
 
     $name = 'cfg_' . sanitize_name($meta_key);
-    $value = get_post_meta($post_id, $meta_key, true);
-    if (!empty($value)) {
-        $value = esc_attr($value);
+    $meta_value = get_post_meta($post_id, $meta_key, true);
+    if (!empty($meta_value)) {
+        $value = esc_attr($meta_value);
     } elseif (!empty($default)) {
         $value = esc_attr($default);
     } else {
@@ -318,7 +305,7 @@ EOF;
     return $out;
 }
 
-/* input[type=checkbox]系のカスタムフィールドのボックスの中身を生成する */
+/* チェックボックスのカスタムフィールドのボックスの中身を生成する */
 function make_checkbox ($param) {
 
     $post_id   = $param['post_id'];
@@ -330,8 +317,8 @@ function make_checkbox ($param) {
     $fieldname = $param['fieldname'];
     $must      = $param['must'];
 
-    $name = 'cfg_' . cfg_utility_class::sanitize_name($meta_key);
-    $meta_value = get_post_meta($post_id, $meta_key);
+    $name = 'cfg_' . sanitize_name($meta_key);
+    $meta_value = get_post_meta($post_id, $meta_key, true);
     if (!empty($meta_value)) {
         $checked = ' checked="checked"';
     } elseif (!empty($default) and trim($default) == 'checked') {
@@ -351,6 +338,162 @@ EOF;
     return $out;
 }
 
+/* マルチチェックボックスのカスタムフィールドのボックスの中身を生成する */
+function make_multi_checkbox ($param) {
+
+    $post_id   = $param['post_id'];
+    $meta_key  = $param['meta_key'];
+    $type      = $param['type'];
+    $class     = $param['class'];
+    $default   = $param['default'];
+    $sample    = $param['sample'];
+    $fieldname = $param['fieldname'];
+    $must      = $param['must'];
+    $values    = $param['values'];
+
+    $name = 'cfg_' . sanitize_name($meta_key);
+    $meta_value = get_post_meta($post_id, $meta_key, true);
+    if (!empty($default)) {
+        $value = preg_replace('/( |　)*#( |　)*/', ',', $default);
+    }
+    if (!empty($meta_value)) {
+        $value = esc_attr($meta_value);
+    }
+    $item_array = array();
+    foreach ($values as $val) {
+        $id = $name . '_' . sanitize_name($val);
+        $item = <<< EOF
+            <label for="{$id}" class="items" title="{$val}">
+                <input id="{$id}" name="{$id}" value="{$val}" type="checkbox" />
+                {$val}
+            </label>
+EOF;
+        array_push($item_array, $item);
+    }
+    $item_str = implode($item_array);
+    $inside = <<< EOF
+        <p class="cfg_input">
+            {$item_str}
+            <input class="data" id="{$name}_data" name="{$name}" value="{$value}" type="text" />
+        </p>
+EOF;
+    $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    return $out;
+}
+
+/* ラジオボタンのカスタムフィールドのボックスの中身を生成する */
+function make_radio ($param) {
+
+    $post_id   = $param['post_id'];
+    $meta_key  = $param['meta_key'];
+    $type      = $param['type'];
+    $class     = $param['class'];
+    $default   = $param['default'];
+    $sample    = $param['sample'];
+    $fieldname = $param['fieldname'];
+    $must      = $param['must'];
+    $values    = $param['values'];
+
+    $name = 'cfg_' . sanitize_name($meta_key);
+    $meta_value = get_post_meta($post_id, $meta_key, true);
+    if (!empty($meta_value)) {
+        $selected = trim($meta_value);
+    } elseif (!empty($default)) {
+        $selected = trim($default);
+    }
+    $item_array = array();
+    foreach($values as $val) {
+        $id = $name . '_' . sanitize_name($val);
+        $checked = (trim($val) == $selected) ? ' checked="checked"' : ' ';
+        $item = <<< EOF
+            <p class="cfg_input">
+                <label for="{$id}">
+                    <input class="data" id="{$id}" name="{$name}" value="{$val}"{$checked} type="radio" />
+                    {$val}
+                </label>
+            </p>
+EOF;
+        array_push($item_array, $item);
+    }
+    $inside = implode($item_array);
+    $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    return $out;
+}
+
+/* セレクトボックスのカスタムフィールドのボックスの中身を生成する */
+function make_select($param) {
+
+    $post_id   = $param['post_id'];
+    $meta_key  = $param['meta_key'];
+    $type      = $param['type'];
+    $class     = $param['class'];
+    $default   = $param['default'];
+    $sample    = $param['sample'];
+    $fieldname = $param['fieldname'];
+    $must      = $param['must'];
+    $values    = $param['values'];
+
+    $name = 'cfg_' . sanitize_name($meta_key);
+    $meta_value = get_post_meta($post_id, $meta_key, true);
+
+    if (!empty($meta_value)) {
+        $selected = trim($meta_value);
+    } else {
+        $selected = trim($default);
+    }
+    $item = <<< EOF
+        <select name="{$name}">
+            <option value="">Select</option>
+EOF;
+    $item_array = array($item);
+    foreach ($values as $val) {
+        $checked = (trim($val) == $selected) ? ' selected="selected"' : '';
+        $item = <<< EOF
+            <option class="data"{$checked} value="{$val}">{$val}</option>
+EOF;
+        array_push($item_array, $item);
+    }
+    array_push($item_array, '</select>');
+    $inside = implode($item_array);
+    $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    return $out;
+}
+
+/* テキストエリアのカスタムフィールドのボックスの中身を生成する */
+function make_textarea($param) {
+
+    $post_id   = $param['post_id'];
+    $meta_key  = $param['meta_key'];
+    $type      = $param['type'];
+    $class     = $param['class'];
+    $default   = $param['default'];
+    $sample    = $param['sample'];
+    $fieldname = $param['fieldname'];
+    $must      = $param['must'];
+    $rows      = $param['rows'];
+    $cols      = $param['cols'];
+
+    $name = 'cfg_' . sanitize_name($meta_key);
+    $meta_value = get_post_meta($post_id, $meta_key, true);
+
+    if (!empty($meta_value)) {
+        $value = esc_attr($meta_value);
+    }
+    $inside = <<< EOF
+        <textarea class="data" id="{$name}" name="{$name}" type="textfield" rows="{$rows}" cols="{$cols}">{$value}</textarea>
+EOF;
+    $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+    return $out;
+}
+
+/* 区切り線のボックスの中身を生成する */
+function make_hr($param) {
+
+    $class     = $param['class'];
+    $fieldname = $param['fieldname'];
+
+    return '<h5 class="postbox_hr ' . $class . '">' . $fieldname . '</h5>';
+}
 
 /*************
    Functions(Template)
