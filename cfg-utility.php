@@ -240,30 +240,30 @@ if ($okuwaki) {
 
 /* カスタムフィールドのキーのサニタイズ */
 function sanitize_name($meta_key) {
-    $meta_key = sanitize_title($meta_key); // taken from WP's wp-includes/functions-formatting.php
-    $meta_key = str_replace('-', '_', $meta_key);
-    return $meta_key;
+    $name = sanitize_title($meta_key); // taken from WP's wp-includes/functions-formatting.php
+    $name = str_replace('-', '_', $name);
+    return $name;
 }
 
 /* input[type=text]要素を生成する */
-function make_input ($meta_key, $value, $size, $default, $input_type) {
-    $attr_id = ($meta_key) ? " id='$meta_key'": '';
-    $attr_name = ($meta_key) ? " name='$meta_key'": '';
+function make_input ($name, $value, $size, $default, $input_type) {
+    $attr_id_name = ($name) ? " id='$name' name='$name'": '';
     $attr_value = ($value) ? " value='$value'": '';
     $attr_size = ($size) ? " size='$size'": '';
     $attr_title = ($default) ? " title='$default'": '';
     $attr_type = ($input_type) ? " type='$input_type'": '';
-    return '<input '.$attr_id.$attr_name.$attr_value.$attr_title.$attr_type.' placeholder="UNKO!!!"/>';
+    return '<input '.$attr_id_name.$attr_value.$attr_title.$attr_type.' placeholder="UNKO!!!"/>';
 }
 
 /* カスタムフィールドの入力フォームを生成する */
-function make_element ($meta_key, $type, $class, $inside, $sample, $fieldname, $must) {
-    $type    = ($type == 'filefield') ? ' imagefield filefield' : ' ' . $type;
-    $class   = $class ? ' ' . $class : ' post';
-    $must    = $must ? ' must' : '';
+function make_element ($name, $type, $class, $inside, $sample, $fieldname, $must) {
+    $id = $name ? $name . '_box': '';
+    $type = ($type == 'filefield') ? ' imagefield filefield' : ' ' . $type;
+    $class = $class ? ' ' . $class : ' post';
+    $must = $must ? ' must' : '';
     $caption = ($sample and ($type != 'checkbox')) ? '<p class="cfg_sample">' . $sample . '</p>' : '';
     $elm = <<< EOF
-        <div class="postbox{$type}{$class}{$must}" id="{$meta_key}">
+        <div class="postbox{$type}{$class}{$must}" id="{$id}">
             <h4 class="cf_title">{$fieldname}</h4>
             <div class="inside">{$inside}{$caption}</div>
         </div>
