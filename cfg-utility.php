@@ -256,6 +256,21 @@ function make_input ($meta_key, $value, $size, $default, $input_type) {
     return '<input '.$attr_id.$attr_name.$attr_value.$attr_title.$attr_type.' placeholder="UNKO!!!"/>';
 }
 
+/* カスタムフィールドの入力フォームを生成する */
+function make_element ($meta_key, $type, $class, $inside, $sample, $fieldname, $must) {
+    $type    = ($type == 'filefield') ? ' imagefield filefield' : ' ' . $type;
+    $class   = $class ? ' ' . $class : ' post';
+    $must    = $must ? ' must' : '';
+    $caption = ($sample and ($type != 'checkbox')) ? '<p class="cfg_sample">' . $sample . '</p>' : '';
+    $elm = <<< EOF
+        <div class="postbox{$type}{$class}{$must}" id="{$meta_key}">
+            <h4 class="cf_title">{$fieldname}</h4>
+            <div class="inside">{$inside}{$caption}</div>
+        </div>
+EOF;
+    return $elm;
+}
+
 /*************
    Functions(Template)
  *************/
