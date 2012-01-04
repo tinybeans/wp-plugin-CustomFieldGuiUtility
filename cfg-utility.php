@@ -174,6 +174,22 @@ if ($okuwaki) {
             );
 */
         /* パラメーター */
+        $param = array(
+            'post_id' => $post_id,
+            'meta_key' => $title,
+            'type' => isset($data['type']) ? $data['type']: NULL,
+            'class' => isset($data['class']) ? $data['class']: NULL,
+            'default' => isset($data['default']) ? $data['default']: NULL,
+            'size' => isset($data['size']) ? $data['size']: NULL,
+            'sample' => isset($data['sample']) ? $data['sample']: NULL,
+            'fieldname' => isset($data['fieldname']) ? $data['fieldname']: NULL,
+            'must' => isset($data['must']) ? $data['must']: NULL,
+            'idname' => isset($data['idname']) ? $data['idname']: NULL,
+            'value' => isset($data['value']) ? $data['value']: NULL
+        );
+    print('<pre> $param =====<br>');
+    var_dump($param);
+    print('</pre>');
         $data_type      = isset($data['type'])      ? $data['type']:      NULL;
         $data_class     = isset($data['class'])     ? $data['class']:     NULL;
         $data_default   = isset($data['default'])   ? $data['default']:   NULL;
@@ -184,20 +200,9 @@ if ($okuwaki) {
         $data_idname    = isset($data['idname'])    ? $data['idname']:    NULL;
 
         if ($data_type == 'textfield') {
-            $out .= cfg_utility_class::make_textform(
-                $post_id,
-                $title,
-                $data_type,
-                $data_class,
-                $data_default,
-                $data_size,
-                $data_sample,
-                $data_fieldname,
-                $data_must,
-                ''/* $data_idname */
-        );
+            $out .= make_textform($param);
         } elseif ($data_type == 'imagefield' or $data_type == 'filefield') {
-            $out .= cfg_utility_class::make_textform(
+            $out .= make_textform(
                 $post_id,
                 $title,
                 $data_type,
@@ -211,24 +216,24 @@ if ($okuwaki) {
             );
         } elseif ($data_type == 'checkbox') {
             $out .= 
-                cfg_utility_class::make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+                make_checkbox($title, $data['type'], $data['class'], $data['default'], $data['sample'], $data['fieldname'], $data['must']);
         } elseif ($data_type == 'multi_checkbox') {
             $out .= 
-                cfg_utility_class::make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
+                make_multi_checkbox($title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
         } elseif ($data_type == 'radio') {
             $out .= 
-                cfg_utility_class::make_radio(
+                make_radio(
                     $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
         } elseif ($data_type == 'select') {
             $out .= 
-                cfg_utility_class::make_select(
+                make_select(
                     $title, $data['type'], $data['class'], explode('#', $data['value']), $data['default'], $data['sample'], $data['fieldname'], $data['must']);
         } elseif ($data_type == 'textarea') {
             $out .= 
-                cfg_utility_class::make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
+                make_textarea($title, $data['type'], $data['class'], $data['rows'], $data['cols'], $data['sample'], $data['fieldname'], $data['must']);
         } elseif ($data_type == 'hr') {
             $out .= 
-                cfg_utility_class::make_hr($data['class'], $data['fieldname']);
+                make_hr($data['class'], $data['fieldname']);
         }
     }
 
@@ -272,18 +277,19 @@ EOF;
 }
 
 /* input[type=text]系のカスタムフィールドのボックスの中身を生成する */
-function make_textform (
-    $post_id   = 0,
-    $meta_key  = NULL,
-    $type      = 'post',
-    $class     = NULL,
-    $default   = NULL,
-    $size      = 25,
-    $sample    = NULL,
-    $fieldname = NULL,
-    $must      = NULL,
-    $idname    = NULL
-) {
+function make_textform ($param) {
+
+    $post_id   = $param['post_id'];
+    $meta_key  = $param['meta_key'];
+    $type      = $param['type'];
+    $class     = $param['class'];
+    $default   = $param['default'];
+    $size      = $param['size'];
+    $sample    = $param['sample'];
+    $fieldname = $param['fieldname'];
+    $must      = $param['must'];
+    $idname    = $param['idname'];
+
     print('<pre> $post_id =====<br>');
     var_dump($post_id);
     print('</pre>');
@@ -314,7 +320,7 @@ EOF;
         </p>
         <p>画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
 EOF;
-        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     } elseif ($type == 'filefield') {
         $inside = <<< EOF
         <p class="cfg_input">
@@ -323,7 +329,7 @@ EOF;
         </p>
         <p>ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
 EOF;
-        $out = cfg_utility_class::make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
+        $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     }
     return $out;
 }
