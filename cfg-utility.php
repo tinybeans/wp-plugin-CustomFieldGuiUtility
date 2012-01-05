@@ -118,9 +118,6 @@ function get_field_title ($post_type) {
 
 /* カスタムフィールドを挿入するメインの関数 */
 function insert_gui ($obj) {
-    print('<pre> $obj =====<br>');
-    var_dump($obj);
-    print('</pre>');
 
     $post_type = 'post';
     $post_id = 0;
@@ -150,13 +147,6 @@ function insert_gui ($obj) {
     $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" /><strong style="font-weight:bold;color:red;">Good Job!!</strong>';
 
     foreach ($fields as $meta_key => $data) {
-/*         $cat_check = TRUE; */
-/*
-        $class_array = explode(' ',$data['class']);
-        if (!in_array($post_type, $class_array)) {
-            continue;
-        }
-*/
 
         /* パラメーター */
         $param = array(
@@ -191,9 +181,6 @@ function insert_gui ($obj) {
             $skip_insert_gui = true;
             $conf_cats = $param['category'];
             foreach ($conf_cats as $conf_cat) {
-print('<pre style="color:red;margin: 30px;padding: 10px;border: 3px solid red;"> $post_cats =====<br>');
-print(in_array(trim($conf_cat), $cat_slugs));
-print('</pre>');
                 if (in_array(trim($conf_cat), $cat_slugs)) {
                     $skip_insert_gui = false;
                     break;
@@ -272,10 +259,6 @@ function make_textform ($param) {
     $fieldname   = $param['fieldname'];
     $must        = $param['must'];
     $placeholder = $param['placeholder'];
-
-    print('<pre> $post_id =====<br>');
-    var_dump($post_id);
-    print('</pre>');
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
