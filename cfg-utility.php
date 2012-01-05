@@ -164,17 +164,27 @@ function insert_gui ($obj) {
             'placeholder' => isset($data['placeholder']) ? $data['placeholder']: ''
         );
 
+        /* 投稿タイプをチェックする */
+        if (!empty($param['class'])) {
+            
+            $conf_class = preg_replace('/ +/', ' ', trim($param['class']));
+            $conf_classes = explode(' ', $conf_class);
+            if (!in_array($post_type, $conf_classes)) {
+                continue;
+            }
+        }
+
         /* カテゴリをチェックする */
-        $skip_insert_gui = false;
         if (!empty($param['category']) and !empty($cat_slugs)) {
+            $skip_insert_gui = true;
             $conf_cats = $param['category'];
             foreach ($conf_cats as $conf_cat) {
 print('<pre style="color:red;margin: 30px;padding: 10px;border: 3px solid red;"> $post_cats =====<br>');
-print("conf_cat($conf_cat) <=> ".implode(',', $cat_slugs));
+print(in_array(trim($conf_cat), $cat_slugs));
 print('</pre>');
-                if (!in_array(trim($conf_cat), $cat_slugs)) {
-                    $skip_insert_gui = true;
-                    continue;
+                if (in_array(trim($conf_cat), $cat_slugs)) {
+                    $skip_insert_gui = false;
+                    break;
                 }
             }
             if ($skip_insert_gui) {
