@@ -47,21 +47,17 @@ if ($cur_post_type){
     add_action('add_meta_boxes', 'isert_custom_field_gui');
 }
 
-/* post and page */
+/* edit_post : 投稿記事またはページが更新・編集された際に実行する。これには、コメントが追加・更新された場合（投稿またはページのコメント数が更新される）も含む。 */
 add_action('edit_post', 'edit_meta_value');
-  /* edit_post:投稿記事またはページが更新・編集された際に実行する。これには、コメントが追加・更新された場合（投稿またはページのコメント数が更新される）も含む。*/
 
-/* post and page */
+/* save_post : インポート機能の利用、記事・ページ編集フォームの利用、XMLRPCでの投稿、メールでの投稿のうちいずれかの方法で記事・ページが作成・更新された際に実行する。 */
 add_action('save_post', 'edit_meta_value');
-  /* save_post:インポート機能の利用、記事・ページ編集フォームの利用、XMLRPCでの投稿、メールでの投稿のうちいずれかの方法で記事・ページが作成・更新された際に実行する。*/
 
-/* post */
+/* publish_post : 投稿記事が公開された際、または公開済みの記事の情報が編集された際に実行する。 */
 add_action('publish_post', 'edit_meta_value');
-  /* publish_post:投稿記事が公開された際、または公開済みの記事の情報が編集された際に実行する。*/
 
-/* page */
+/* transition_post_status : 記事・ページが公開された際、またはステータスが「公開」に変更された場合に実行する。 */
 add_action('transition_post_status', 'edit_meta_value');
-  /* transition_post_status:バージョン2.3以上。記事・ページが公開された際、またはステータスが「公開」に変更された場合に実行する。*/
 
 /******************
    Functions(main)
