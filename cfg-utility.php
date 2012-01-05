@@ -118,9 +118,9 @@ function insert_gui ($obj) {
     }
 
     /* カテゴリを取得する */
+    $cat_slugs = array();
     if ($post_type == 'post') {
         $post_cats = get_the_category($post_id);
-        $cat_slugs = array();
         foreach ($post_cats as $post_cat) {
             if (isset($post_cat->slug)) {
                 array_push($cat_slugs, urldecode($post_cat->slug));
@@ -134,15 +134,11 @@ function insert_gui ($obj) {
         return;
     }
 
-    print('<pre> $fields =====<br>');
-    var_dump($fields);
-    print('</pre>');
-
     /* nonceを設定する */
     $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" /><strong style="font-weight:bold;color:red;">Good Job!!</strong>';
 
     foreach ($fields as $meta_key => $data) {
-        $cat_check = TRUE;
+/*         $cat_check = TRUE; */
 /*
         $class_array = explode(' ',$data['class']);
         if (!in_array($post_type, $class_array)) {
@@ -167,9 +163,25 @@ function insert_gui ($obj) {
             'category' => isset($data['category']) ? explode(' ', $data['category']): '',
             'placeholder' => isset($data['placeholder']) ? $data['placeholder']: ''
         );
-    print('<pre> $param =====<br>');
-    var_dump($param);
-    print('</pre>');
+
+        /* カテゴリをチェックする */
+        $skip_insert_gui = false;
+        if (!empty($param['category']) and !empty($cat_slugs)) {
+            $conf_cats = $param['category'];
+            foreach ($conf_cats as $conf_cat) {
+print('<pre style="color:red;margin: 30px;padding: 10px;border: 3px solid red;"> $post_cats =====<br>');
+print("conf_cat($conf_cat) <=> ".implode(',', $cat_slugs));
+print('</pre>');
+                if (!in_array(trim($conf_cat), $cat_slugs)) {
+                    $skip_insert_gui = true;
+                    continue;
+                }
+            }
+            if ($skip_insert_gui) {
+                continue;
+            }
+        }
+
         $data_type = $param['type'];
 
         if ($data_type == 'textfield' or $data_type == 'imagefield' or $data_type == 'filefield') {
