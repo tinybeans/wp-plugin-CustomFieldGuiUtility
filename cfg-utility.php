@@ -178,7 +178,9 @@ function insert_gui ($obj) {
             'must' => isset($data['must']) ? $data['must']: '',
             'rows' => isset($data['rows']) ? $data['rows']: '',
             'cols' => isset($data['cols']) ? $data['cols']: '',
-            'values' => isset($data['value']) ? explode('#', $data['value']): ''
+            'values' => isset($data['value']) ? explode('#', $data['value']): '',
+            'category' => isset($data['category']) ? explode(' ', $data['category']): '',
+            'placeholder' => isset($data['placeholder']) ? $data['placeholder']: ''
         );
     print('<pre> $param =====<br>');
     var_dump($param);
@@ -212,13 +214,14 @@ function sanitize_name($meta_key) {
 }
 
 /* input[type=text]要素を生成する */
-function make_input ($name, $value, $size, $default, $input_type) {
+function make_input ($name, $value, $size, $default, $input_type, $placeholder) {
     $attr_id_name = ($name) ? " id='$name' name='$name'": '';
     $attr_value = ($value) ? " value='$value'": '';
     $attr_size = ($size) ? " size='$size'": '';
     $attr_title = ($default) ? " title='$default'": '';
     $attr_type = ($input_type) ? " type='$input_type'": '';
-    return '<input '.$attr_id_name.$attr_value.$attr_title.$attr_type.' placeholder="UNKO!!!"/>';
+    $attr_plce = ($placeholder) ? " placeholder='$placeholder'": '';
+    return '<input '.$attr_id_name.$attr_value.$attr_title.$attr_type.$attr_size.$attr_plce.' />';
 }
 
 /* カスタムフィールドの入力フォームを生成する */
@@ -240,15 +243,16 @@ EOF;
 /* input[type=text]系のカスタムフィールドのボックスの中身を生成する */
 function make_textform ($param) {
 
-    $post_id   = $param['post_id'];
-    $meta_key  = $param['meta_key'];
-    $type      = $param['type'];
-    $class     = $param['class'];
-    $default   = $param['default'];
-    $size      = $param['size'];
-    $sample    = $param['sample'];
-    $fieldname = $param['fieldname'];
-    $must      = $param['must'];
+    $post_id     = $param['post_id'];
+    $meta_key    = $param['meta_key'];
+    $type        = $param['type'];
+    $class       = $param['class'];
+    $default     = $param['default'];
+    $size        = $param['size'];
+    $sample      = $param['sample'];
+    $fieldname   = $param['fieldname'];
+    $must        = $param['must'];
+    $placeholder = $param['placeholder'];
 
     print('<pre> $post_id =====<br>');
     var_dump($post_id);
@@ -263,7 +267,7 @@ function make_textform ($param) {
     } else {
         $value = '';
     }
-    $input = make_input ($name, $value, $size, $default, 'text');
+    $input = make_input ($name, $value, $size, $default, 'text', $placeholder);
     if ($type == 'textfield') {
         $inside = <<< EOF
         <p class='cfg_input'>$input</p>
