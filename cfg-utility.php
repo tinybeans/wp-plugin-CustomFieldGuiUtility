@@ -82,13 +82,25 @@ function isert_custom_field_gui ($post_type = 'post', $post = NULL) {
 
 /* 設定ファイルの取得と変換 */
 function get_conf_ini ($post_type) {
-    $file_path = dirname(__FILE__) . '/conf-' . $post_type . '.ini';
-    if (! file_exists($file_path)) {
-        $file_path = dirname(__FILE__) . '/conf.ini';
-        if (! file_exists($file_path)) {
-            user_error('Custom Field GUI Utility の設定ファイルが見つかりません。設定ファイルを設置するか、同プラグインを無効化してください。', E_USER_ERROR);
-            return false;
+    $sufix_arry = array('');
+    global $post;
+    if (isset($post_type)) {
+        array_unshift($sufix_arry, '-' . $post_type);
+    }
+    if ($post->ID) {
+        array_unshift($sufix_arry, '-' . $post->ID);
+    }
+    $success_conf_ini = false;
+    foreach ($sufix_arry as $suffix) {
+        $file_path = dirname(__FILE__) . '/conf' . $suffix . '.ini';
+        if (file_exists($file_path)) {
+            $success_conf_ini = true;
+            break;
         }
+    }
+    if (!$success_conf_ini) {
+        user_error('Custom Field GUI Utility の設定ファイルが見つかりません。設定ファイルを設置するか、同プラグインを無効化してください。', E_USER_ERROR);
+        return false;
     }
     $conf = parse_ini_file($file_path, true);
     return $conf;
