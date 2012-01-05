@@ -117,6 +117,17 @@ function insert_gui ($obj) {
         $post_id = $obj->ID;
     }
 
+    /* カテゴリを取得する */
+    if ($post_type == 'post') {
+        $post_cats = get_the_category($post_id);
+        $cat_slugs = array();
+        foreach ($post_cats as $post_cat) {
+            if (isset($post_cat->slug)) {
+                array_push($cat_slugs, urldecode($post_cat->slug));
+            }
+        }
+    }
+
     /* 設定ファイルの取得と変換 */
     $fields = get_conf_ini($post_type);
     if (!$fields) {
@@ -133,38 +144,12 @@ function insert_gui ($obj) {
     foreach ($fields as $meta_key => $data) {
         $cat_check = TRUE;
 /*
-        if (($post_id != '') and ($post_type == 'post') and isset($data['category']) and $cat_check) {
-            $cat_array = explode(' ', $data['category']);
-            $cats = get_the_category($post_id);
-            foreach ($cats as $cat) {
-                $cat_slug = $cat->slug;
-                if (in_array($cat_slug, $cat_array)) {
-                    $cat_check = FALSE;
-                }
-            }
-            if ($cat_check) {
-                continue;
-            }
-        }
         $class_array = explode(' ',$data['class']);
         if (!in_array($post_type, $class_array)) {
             continue;
         }
 */
-/*
-            $params = array(
-                $post_id,
-                $title,
-                $data['type'],
-                $data['class'],
-                $data['default'],
-                $data['size'],
-                $data['sample'],
-                $data['fieldname'],
-                $data['must'],
-                $data['idname']
-            );
-*/
+
         /* パラメーター */
         $param = array(
             'post_id' => $post_id,
