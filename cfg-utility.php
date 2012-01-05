@@ -3,10 +3,10 @@
 -- This Plugin's Information --------------------------------
   Plugin Name: Custom Field Gui Utility
   Plugin URI: http://www.tinybeans.net/blog/download/wp-plugin/cfg-utility-3.html
-  Description: WordPress 3.1 のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
+  Description: WordPress 3.3 のカスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。Original plugin's author is <a href="http://rhymedcode.net">Joshua Sigar</a>.
   Author: Tomohiro Okuwaki
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.1.4
+  Version: 3.2
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -37,15 +37,6 @@ require_once (ABSPATH . 'wp-admin/includes/template.php');
 
 add_action ('admin_head','insert_head');
 add_action ('add_meta_boxes', 'isert_custom_field_gui');
-
-/* page and custom post type */
-$cur_post_type = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : '';
-if (isset($_REQUEST['post'])){
-    $cur_post_type=get_post_type($_REQUEST['post']);
-}
-if ($cur_post_type){
-    add_action('add_meta_boxes', 'isert_custom_field_gui');
-}
 
 /* edit_post : 投稿記事またはページが更新・編集された際に実行する。これには、コメントが追加・更新された場合（投稿またはページのコメント数が更新される）も含む。 */
 add_action('edit_post', 'edit_meta_value');
