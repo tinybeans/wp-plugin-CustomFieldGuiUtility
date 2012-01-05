@@ -168,8 +168,8 @@ jQuery(function($){
         setCookie('imf_clc_id',clc_id);
         
         // WPオリジナルのアップローダーを起動
-        if ($('#add_media').length > 0) {
-            $('#add_media').click();
+        if ($('#content-add_media').length > 0) {
+            $('#content-add_media').click();
         } else {
             $('#media-buttons a').click();
         }
