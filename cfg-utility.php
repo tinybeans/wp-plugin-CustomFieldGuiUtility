@@ -218,7 +218,7 @@ function make_input ($name, $value, $size, $default, $input_type, $placeholder) 
     $attr_title = ($default) ? " title='$default'": '';
     $attr_type = ($input_type) ? " type='$input_type'": '';
     $attr_plce = ($placeholder) ? " placeholder='$placeholder'": '';
-    return '<input '.$attr_id_name.$attr_value.$attr_title.$attr_type.$attr_size.$attr_plce.' />';
+    return '<input class="data" '.$attr_id_name.$attr_value.$attr_title.$attr_type.$attr_size.$attr_plce.' />';
 }
 
 /* カスタムフィールドの入力フォームを生成する */
