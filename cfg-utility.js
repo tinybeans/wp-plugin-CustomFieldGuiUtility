@@ -10,6 +10,7 @@
  *
  * jQuery v1.7.1
  * Facebox 1.2
+ * exValidation 1.3.0  (c)5509 (http://5509.me/)
  */
 
 jQuery(function($){
