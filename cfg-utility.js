@@ -15,6 +15,24 @@
 
 jQuery(function($){
 
+    // 必須項目の設定（exValidation用）
+    $('div.must').each(function(){
+        var self = $(this);
+        if (self.hasClass('textfield') || self.hasClass('imagefield') || self.hasClass('filefield')) {
+            self.find('input.data').addClass('chkrequired');
+        } else if (self.hasClass('checkboxs')) {
+            self.find('label').addClass('chkcheckbox');
+        } else if (self.hasClass('multi_checkbox')) {
+            self.find('span.multi_checkbox_wrapper').addClass('chkcheckbox');
+        } else if (self.hasClass('radio')) {
+            self.find('div.radio_wrapper').addClass('chkgroup chkradio');
+        } else if (self.hasClass('select')) {
+            self.find('select').addClass('chkselect');
+        } else if (self.hasClass('textarea')) {
+            self.find('textarea').addClass('chkrequired');
+        }
+    });
+
 // Functions
 
     function getMediaURL (str) {
