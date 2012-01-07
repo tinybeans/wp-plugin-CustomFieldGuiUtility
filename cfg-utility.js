@@ -1,16 +1,15 @@
 /*
- * Custom Field GUI Utility 3.1
+ * Custom Field GUI Utility 3.2
  *
- * Copyright (c) 2008-2009 Tomohiro Okuwaki
+ * Copyright (c) Tomohiro Okuwaki
  * Licensed under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * Since:       2008-10-15
- * Last Update: 2011-03-27
+ * Last Update: 2012-01-07
  *
- * jQuery v1.4.4
+ * jQuery v1.7.1
  * Facebox 1.2
- * cookie.js
  */
 
 jQuery(function($){
