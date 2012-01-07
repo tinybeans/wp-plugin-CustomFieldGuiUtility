@@ -322,7 +322,7 @@ function make_checkbox ($param) {
     }
     $inside = <<< EOF
         <p class="cfg_input">
-            <label class="select" for="{$name}">
+            <label id="{$name}_label" class="select" for="{$name}">
                 <input class="checkbox data" name="{$name}" value="true" id="{$name}"{$checked} type="checkbox" />
                 {$sample}
             </label>
@@ -367,7 +367,7 @@ EOF;
     $item_str = implode($item_array);
     $inside = <<< EOF
         <p class="cfg_input">
-            {$item_str}
+            <span id="{$name}_wrap" class="multi_checkbox_wrapper">{$item_str}</span>
             <input class="data" id="{$name}_data" name="{$name}" value="{$value}" type="text" />
         </p>
 EOF;
@@ -401,7 +401,7 @@ function make_radio ($param) {
         $checked = (trim($val) == $selected) ? ' checked="checked"' : ' ';
         $item = <<< EOF
             <p class="cfg_input">
-                <label for="{$id}">
+                <label id="{$id}_label" for="{$id}">
                     <input class="data" id="{$id}" name="{$name}" value="{$val}"{$checked} type="radio" />
                     {$val}
                 </label>
@@ -410,6 +410,7 @@ EOF;
         array_push($item_array, $item);
     }
     $inside = implode($item_array);
+    $inside = '<div class="radio_wrapper" style="display: inline;">' . $inside . '</div>';
     $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     return $out;
 }
@@ -436,7 +437,7 @@ function make_select($param) {
         $selected = trim($default);
     }
     $item = <<< EOF
-        <select name="{$name}">
+        <select id="{$name}_select" name="{$name}">
             <option value="">Select</option>
 EOF;
     $item_array = array($item);
