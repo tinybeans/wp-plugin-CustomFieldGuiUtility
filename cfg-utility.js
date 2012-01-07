@@ -160,23 +160,23 @@ jQuery(function($){
 
 
     // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
-    $('img.cfg_add_media').live('click', function(){
+    $('img.cfg_add_media').on('click', function(){
         var self = $(this);
-        
+
         // アップローダーをクリック(clc)したイメージフィールドのidをcookieに保存
-        var clc_id = self.parents('div.imagefield').attr('id');
+        var clc_id = self.closest('div.imagefield').attr('id');
         setCookie('imf_clc_id',clc_id);
-        
+
         // WPオリジナルのアップローダーを起動
         if ($('#content-add_media').length > 0) {
             $('#content-add_media').click();
         } else {
             $('#media-buttons a').click();
         }
-        
+
         // アップローダーを閉じるときにカスタムフィールドに値を挿入する動き
         $('#TB_closeWindowButton').click(function(){
-    
+
             // cookieからidと値を取得して変数に代入後にリセット
             var imf_clc_id = '#' + getCookie('imf_clc_id');
             var imf_elm = $(imf_clc_id);
@@ -276,7 +276,7 @@ jQuery(function($){
     });
     // 管理画面にサムネイルを表示 [end]
 
-    // キャンセル」ボタンを押したときの動作の設定 [start]
+    // 「キャンセル」ボタンを押したときの動作の設定 [start]
     $('img.cancel').live('click', function() {
         $(this)
             .next('span')
@@ -291,7 +291,7 @@ jQuery(function($){
             .end()
             .hide();
     });
-    // キャンセル」ボタンを押したときの動作の設定 [end]
+    // 「キャンセル」ボタンを押したときの動作の設定 [end]
 
     // [start]必須要素の入力チェック
     var required_boxs = 
