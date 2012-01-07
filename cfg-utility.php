@@ -60,8 +60,16 @@ function insert_head () {
     $head = <<< EOD
     <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
     <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{$plugin_url}exValidation/css/exvalidation.css" type="text/css" />
     <script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
+    <script type="text/javascript" src="{$plugin_url}exValidation/js/exvalidation.js"></script>
+    <script type="text/javascript" src="{$plugin_url}exValidation/js/exchecker-ja.js"></script>
     <script type="text/javascript" src="{$plugin_url}cfg-utility.js"></script>
+    <script type="text/javascript">
+    jQuery(function($){
+        $("form#post").exValidation();
+    });
+    </script>
 EOD;
     echo $head;
 }
