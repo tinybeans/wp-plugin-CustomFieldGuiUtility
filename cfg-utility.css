@@ -111,3 +111,8 @@ div.multi_checkbox div.inside p.cfg_input label {
 div.radio p.cfg_input {
 	display: inline;
 }
+
+/* exValidation */
+form#post .err {
+    background-color: #FFC8C5 !important;
+}
