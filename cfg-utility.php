@@ -143,7 +143,7 @@ function insert_gui ($obj) {
     }
 
     /* nonceを設定する */
-    $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" /><strong style="font-weight:bold;color:red;">Good Job!!</strong>';
+    $out = '<input type="hidden" name="custom-field-gui-verify-key" id="custom-field-gui-verify-key" value="' . wp_create_nonce('custom-field-gui') . '" />';
 
     foreach ($fields as $meta_key => $data) {
 
@@ -162,7 +162,8 @@ function insert_gui ($obj) {
             'cols' => isset($data['cols']) ? $data['cols']: '',
             'values' => isset($data['value']) ? explode('#', $data['value']): '',
             'category' => isset($data['category']) ? explode(' ', $data['category']): '',
-            'placeholder' => isset($data['placeholder']) ? $data['placeholder']: ''
+            'placeholder' => isset($data['placeholder']) ? $data['placeholder']: '',
+            'validation' => isset($data['validation']) ? $data['validation']: ''
         );
 
         /* 投稿タイプをチェックする */
@@ -219,14 +220,15 @@ function sanitize_name($meta_key) {
 }
 
 /* input[type=text]要素を生成する */
-function make_input ($name, $value, $size, $default, $input_type, $placeholder) {
+function make_input ($name, $value, $size, $default, $input_type, $placeholder, $validation) {
     $attr_id_name = ($name) ? " id='$name' name='$name'": '';
     $attr_value = ($value) ? " value='$value'": '';
     $attr_size = ($size) ? " size='$size'": '';
     $attr_title = ($default) ? " title='$default'": '';
     $attr_type = ($input_type) ? " type='$input_type'": '';
     $attr_plce = ($placeholder) ? " placeholder='$placeholder'": '';
-    return '<input class="data" '.$attr_id_name.$attr_value.$attr_title.$attr_type.$attr_size.$attr_plce.' />';
+    $validation_class = ($validation) ? ' ' . $validation: '';
+    return '<input class="data'.$validation_class.'" '.$attr_id_name.$attr_value.$attr_title.$attr_type.$attr_size.$attr_plce.' />';
 }
 
 /* カスタムフィールドの入力フォームを生成する */
@@ -258,6 +260,7 @@ function make_textform ($param) {
     $fieldname   = $param['fieldname'];
     $must        = $param['must'];
     $placeholder = $param['placeholder'];
+    $validation  = $param['validation'];
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
@@ -268,7 +271,7 @@ function make_textform ($param) {
     } else {
         $value = '';
     }
-    $input = make_input ($name, $value, $size, $default, 'text', $placeholder);
+    $input = make_input ($name, $value, $size, $default, 'text', $placeholder, $validation);
     if ($type == 'textfield') {
         $inside = <<< EOF
         <p class='cfg_input'>$input</p>
@@ -302,14 +305,15 @@ EOF;
 /* チェックボックスのカスタムフィールドのボックスの中身を生成する */
 function make_checkbox ($param) {
 
-    $post_id   = $param['post_id'];
-    $meta_key  = $param['meta_key'];
-    $type      = $param['type'];
-    $class     = $param['class'];
-    $default   = $param['default'];
-    $sample    = $param['sample'];
-    $fieldname = $param['fieldname'];
-    $must      = $param['must'];
+    $post_id    = $param['post_id'];
+    $meta_key   = $param['meta_key'];
+    $type       = $param['type'];
+    $class      = $param['class'];
+    $default    = $param['default'];
+    $sample     = $param['sample'];
+    $fieldname  = $param['fieldname'];
+    $must       = $param['must'];
+    $validation = $param['validation'];
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
@@ -322,7 +326,7 @@ function make_checkbox ($param) {
     }
     $inside = <<< EOF
         <p class="cfg_input">
-            <label id="{$name}_label" class="select" for="{$name}">
+            <label id="{$name}_label" class="select {$validation}" for="{$name}">
                 <input class="checkbox data" name="{$name}" value="true" id="{$name}"{$checked} type="checkbox" />
                 {$sample}
             </label>
@@ -335,15 +339,16 @@ EOF;
 /* マルチチェックボックスのカスタムフィールドのボックスの中身を生成する */
 function make_multi_checkbox ($param) {
 
-    $post_id   = $param['post_id'];
-    $meta_key  = $param['meta_key'];
-    $type      = $param['type'];
-    $class     = $param['class'];
-    $default   = $param['default'];
-    $sample    = $param['sample'];
-    $fieldname = $param['fieldname'];
-    $must      = $param['must'];
-    $values    = $param['values'];
+    $post_id    = $param['post_id'];
+    $meta_key   = $param['meta_key'];
+    $type       = $param['type'];
+    $class      = $param['class'];
+    $default    = $param['default'];
+    $sample     = $param['sample'];
+    $fieldname  = $param['fieldname'];
+    $must       = $param['must'];
+    $values     = $param['values'];
+    $validation = $param['validation'];
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
@@ -367,7 +372,7 @@ EOF;
     $item_str = implode($item_array);
     $inside = <<< EOF
         <p class="cfg_input">
-            <span id="{$name}_wrap" class="multi_checkbox_wrapper">{$item_str}</span>
+            <span id="{$name}_wrap" class="multi_checkbox_wrapper {$validation}">{$item_str}</span>
             <input class="data" id="{$name}_data" name="{$name}" value="{$value}" type="text" />
         </p>
 EOF;
@@ -378,15 +383,16 @@ EOF;
 /* ラジオボタンのカスタムフィールドのボックスの中身を生成する */
 function make_radio ($param) {
 
-    $post_id   = $param['post_id'];
-    $meta_key  = $param['meta_key'];
-    $type      = $param['type'];
-    $class     = $param['class'];
-    $default   = $param['default'];
-    $sample    = $param['sample'];
-    $fieldname = $param['fieldname'];
-    $must      = $param['must'];
-    $values    = $param['values'];
+    $post_id    = $param['post_id'];
+    $meta_key   = $param['meta_key'];
+    $type       = $param['type'];
+    $class      = $param['class'];
+    $default    = $param['default'];
+    $sample     = $param['sample'];
+    $fieldname  = $param['fieldname'];
+    $must       = $param['must'];
+    $values     = $param['values'];
+    $validation = $param['validation'];
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
@@ -394,6 +400,8 @@ function make_radio ($param) {
         $selected = trim($meta_value);
     } elseif (!empty($default)) {
         $selected = trim($default);
+    } else {
+        $selected = '';
     }
     $item_array = array();
     foreach($values as $val) {
@@ -410,7 +418,7 @@ EOF;
         array_push($item_array, $item);
     }
     $inside = implode($item_array);
-    $inside = '<div class="radio_wrapper" style="display: inline;">' . $inside . '</div>';
+    $inside = '<div class="radio_wrapper ' . $validation . '" style="display: inline;">' . $inside . '</div>';
     $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     return $out;
 }
@@ -418,15 +426,16 @@ EOF;
 /* セレクトボックスのカスタムフィールドのボックスの中身を生成する */
 function make_select($param) {
 
-    $post_id   = $param['post_id'];
-    $meta_key  = $param['meta_key'];
-    $type      = $param['type'];
-    $class     = $param['class'];
-    $default   = $param['default'];
-    $sample    = $param['sample'];
-    $fieldname = $param['fieldname'];
-    $must      = $param['must'];
-    $values    = $param['values'];
+    $post_id    = $param['post_id'];
+    $meta_key   = $param['meta_key'];
+    $type       = $param['type'];
+    $class      = $param['class'];
+    $default    = $param['default'];
+    $sample     = $param['sample'];
+    $fieldname  = $param['fieldname'];
+    $must       = $param['must'];
+    $values     = $param['values'];
+    $validation = $param['validation'];
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
@@ -437,7 +446,7 @@ function make_select($param) {
         $selected = trim($default);
     }
     $item = <<< EOF
-        <select id="{$name}_select" name="{$name}">
+        <select id="{$name}_select" name="{$name}" class="{$validation}">
             <option value="">Select</option>
 EOF;
     $item_array = array($item);
@@ -457,16 +466,17 @@ EOF;
 /* テキストエリアのカスタムフィールドのボックスの中身を生成する */
 function make_textarea($param) {
 
-    $post_id   = $param['post_id'];
-    $meta_key  = $param['meta_key'];
-    $type      = $param['type'];
-    $class     = $param['class'];
-    $default   = $param['default'];
-    $sample    = $param['sample'];
-    $fieldname = $param['fieldname'];
-    $must      = $param['must'];
-    $rows      = $param['rows'];
-    $cols      = $param['cols'];
+    $post_id    = $param['post_id'];
+    $meta_key   = $param['meta_key'];
+    $type       = $param['type'];
+    $class      = $param['class'];
+    $default    = $param['default'];
+    $sample     = $param['sample'];
+    $fieldname  = $param['fieldname'];
+    $must       = $param['must'];
+    $rows       = $param['rows'];
+    $cols       = $param['cols'];
+    $validation = $param['validation'];
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
@@ -477,7 +487,7 @@ function make_textarea($param) {
         $value = esc_attr($default);
     }
     $inside = <<< EOF
-        <textarea class="data" id="{$name}" name="{$name}" type="textfield" rows="{$rows}" cols="{$cols}">{$value}</textarea>
+        <textarea class="data {$validation}" id="{$name}" name="{$name}" type="textfield" rows="{$rows}" cols="{$cols}">{$value}</textarea>
 EOF;
     $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     return $out;
