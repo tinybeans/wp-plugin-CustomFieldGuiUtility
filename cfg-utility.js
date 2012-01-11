@@ -178,7 +178,7 @@ jQuery(function($){
 
 
     // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
-    $('img.cfg_add_media').on('click', function(){
+    $('img.cfg_add_media').live('click', function(){
         var self = $(this);
 
         // アップローダーをクリック(clc)したイメージフィールドのidをcookieに保存
