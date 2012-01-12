@@ -237,7 +237,7 @@ function make_element ($name, $type, $class, $inside, $sample, $fieldname, $must
     $type = ($type == 'filefield') ? ' imagefield filefield' : ' ' . $type;
     $class = $class ? ' ' . $class : ' post';
     $must = $must ? ' must' : '';
-    $caption = ($sample and ($type != 'checkbox')) ? '<p class="cfg_sample">' . $sample . '</p>' : '';
+    $caption = $sample ? '<p class="cfg_sample">' . $sample . '</p>' : '';
     $elm = <<< EOF
         <div class="postbox{$type}{$class}{$must}" id="{$id}">
             <h4 class="cf_title">{$fieldname}</h4>
@@ -332,7 +332,7 @@ function make_checkbox ($param) {
             </label>
         </p>
 EOF;
-    $out = make_element ($name, 'checkboxs', $class, $inside, $sample, $fieldname, $must);
+    $out = make_element ($name, 'checkboxs', $class, $inside, '', $fieldname, $must);
     return $out;
 }
 
