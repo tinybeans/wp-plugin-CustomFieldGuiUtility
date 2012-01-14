@@ -6,7 +6,7 @@
   Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
   Author: Tomohiro Okuwaki（Web屋かたつむりくん）
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.2
+  Version: 3.2.3
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -286,7 +286,7 @@ EOF;
                 <a href="#" class="image" rel="facebox"></a>
             </span>
         </p>
-        <p>画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
+        <p class="cfg_add_media_pointer"><span style="display:none;">画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></span></P>
 EOF;
         $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     } elseif ($type == 'filefield') {
@@ -295,7 +295,7 @@ EOF;
             $input
             <img class="cancel" src="" width="16" height="16" style="display:none;" />
         </p>
-        <p>ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></P>
+        <p class="cfg_add_media_pointer"><span style="display:none;">ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></span></P>
 EOF;
         $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     }
