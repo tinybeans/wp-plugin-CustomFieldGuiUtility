@@ -222,11 +222,11 @@ function sanitize_name($meta_key) {
 /* input[type=text]要素を生成する */
 function make_input ($name, $value, $size, $default, $input_type, $placeholder, $validation) {
     $attr_id_name = ($name) ? " id='$name' name='$name'": '';
-    $attr_value = ($value) ? " value='$value'": '';
+    $attr_value = ($value || $value == 0) ? " value='$value'": '';
     $attr_size = ($size) ? " size='$size'": '';
-    $attr_title = ($default) ? " title='$default'": '';
+    $attr_title = ($default || $default == 0) ? " title='$default'": '';
     $attr_type = ($input_type) ? " type='$input_type'": '';
-    $attr_plce = ($placeholder) ? " placeholder='$placeholder'": '';
+    $attr_plce = ($placeholder || $placeholder == 0) ? " placeholder='$placeholder'": '';
     $validation_class = ($validation) ? ' ' . $validation: '';
     return '<input class="data'.$validation_class.'" '.$attr_id_name.$attr_value.$attr_title.$attr_type.$attr_size.$attr_plce.' />';
 }
@@ -266,7 +266,7 @@ function make_textform ($param) {
     $meta_value = get_post_meta($post_id, $meta_key, true);
     if (!empty($meta_value)) {
         $value = esc_attr($meta_value);
-    } elseif (!empty($default)) {
+    } elseif (!empty($default) || $default == 0) {
         $value = esc_attr($default);
     } else {
         $value = '';
