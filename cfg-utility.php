@@ -6,7 +6,7 @@
   Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
   Author: Tomohiro Okuwaki（Web屋かたつむりくん）
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.3
+  Version: 3.2.4
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -272,6 +272,11 @@ function make_textform ($param) {
         $value = '';
     }
     $input = make_input ($name, $value, $size, $default, 'text', $placeholder, $validation);
+    $media_buttons = '';
+    ob_start();
+    do_action('media_buttons');
+    $media_buttons = ob_get_contents();
+    ob_end_clean();
     if ($type == 'textfield') {
         $inside = <<< EOF
         <p class='cfg_input'>$input</p>
@@ -286,7 +291,7 @@ EOF;
                 <a href="#" class="image" rel="facebox"></a>
             </span>
         </p>
-        <p class="cfg_add_media_pointer"><span style="display:none;">画像を追加：<img alt="画像を追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></span></P>
+        <p class="cfg_add_media_pointer">{$media_buttons}</P>
 EOF;
         $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     } elseif ($type == 'filefield') {
@@ -295,7 +300,7 @@ EOF;
             $input
             <img class="cancel" src="" width="16" height="16" style="display:none;" />
         </p>
-        <p class="cfg_add_media_pointer"><span style="display:none;">ファイルを追加：<img alt="ファイルを追加" src="images/media-button-other.gif" class="cfg_add_media" style="cursor:pointer;" /></span></P>
+        <p class="cfg_add_media_pointer">{$media_buttons}</P>
 EOF;
         $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     }

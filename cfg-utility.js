@@ -1,12 +1,12 @@
 /*
- * Custom Field GUI Utility 3.2
+ * Custom Field GUI Utility 3.2.3
  *
  * Copyright (c) Tomohiro Okuwaki
  * Licensed under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * Since:       2008-10-15
- * Last Update: 2012-01-15
+ * Last Update: 2012-02-24
  *
  * jQuery v1.7.1
  * Facebox 1.2
@@ -175,9 +175,9 @@ jQuery(function($){
     });
     // Multi Checkbox [end]
 
-    // アップロードボタンをクローン [start]
-    $('#content-add_media').clone(true).addClass('cfg_add_media_clone').removeAttr('id').appendTo('p.cfg_add_media_pointer');
-    // アップロードボタンをクローン [end]
+    // アップロードボタンを調整 [start]
+    $('p.cfg_add_media_pointer a.add_media').addClass('cfg_add_media_clone').removeAttr('id');
+    // アップロードボタンを調整 [end]
 
     // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
     $('a.cfg_add_media_clone').on('click', function(){
