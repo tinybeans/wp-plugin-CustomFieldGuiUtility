@@ -1,12 +1,12 @@
 /*
- * Custom Field GUI Utility 3.2.3
+ * Custom Field GUI Utility 3.2
  *
  * Copyright (c) Tomohiro Okuwaki
  * Licensed under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * Since:       2008-10-15
- * Last Update: 2012-02-24
+ * Last Update: 2012-04-19
  *
  * jQuery v1.7.1
  * Facebox 1.2
@@ -25,7 +25,7 @@ jQuery(function($){
         } else if (self.hasClass('multi_checkbox')) {
             self.find('span.multi_checkbox_wrapper').addClass('chkcheckbox');
         } else if (self.hasClass('radio')) {
-            self.find('div.radio_wrapper').addClass('chkgroup chkradio');
+            self.find('div.radio_wrapper').addClass('chkradio');
         } else if (self.hasClass('select')) {
             self.find('select').addClass('chkselect');
         } else if (self.hasClass('textarea')) {

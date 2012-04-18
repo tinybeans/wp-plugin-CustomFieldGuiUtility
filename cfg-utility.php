@@ -6,7 +6,7 @@
   Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
   Author: Tomohiro Okuwaki（Web屋かたつむりくん）
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.4
+  Version: 3.2.5
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -352,6 +352,7 @@ function make_multi_checkbox ($param) {
     $sample     = $param['sample'];
     $fieldname  = $param['fieldname'];
     $must       = $param['must'];
+    $value      = '';
     $values     = $param['values'];
     $validation = $param['validation'];
 
@@ -423,7 +424,7 @@ EOF;
         array_push($item_array, $item);
     }
     $inside = implode($item_array);
-    $inside = '<div class="radio_wrapper ' . $validation . '" style="display: inline;">' . $inside . '</div>';
+    $inside = '<div id="' . $id . '_radio_wrapper" class="radio_wrapper ' . $validation . '" style="display: inline;">' . $inside . '</div>';
     $out = make_element ($name, $type, $class, $inside, $sample, $fieldname, $must);
     return $out;
 }
