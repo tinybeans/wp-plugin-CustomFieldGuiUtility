@@ -6,7 +6,7 @@
   Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
   Author: Tomohiro Okuwaki（Web屋かたつむりくん）
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.5
+  Version: 3.2.6
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -264,7 +264,7 @@ function make_textform ($param) {
 
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
-    if (!empty($meta_value)) {
+    if (!empty($meta_value) or strval($meta_value) === '0') {
         $value = esc_attr($meta_value);
     } elseif (!empty($default) || $default == 0) {
         $value = esc_attr($default);
@@ -487,7 +487,7 @@ function make_textarea($param) {
     $name = 'cfg_' . sanitize_name($meta_key);
     $meta_value = get_post_meta($post_id, $meta_key, true);
 
-    if (!empty($meta_value)) {
+    if (!empty($meta_value) or strval($meta_value) === '0') {
         $value = esc_attr($meta_value);
     } else {
         $value = esc_attr($default);
