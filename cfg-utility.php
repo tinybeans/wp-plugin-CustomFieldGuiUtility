@@ -566,14 +566,12 @@ function get_imagefield($key) {
 function get_attachment_object($post_id) {
     global $wpdb;
     $attachment = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE ID = $post_id");
-    $post = $attachment;
-    setup_postdata($post);
-    $out['title'] = $post->post_title;
-    $out['url'] = $post->guid;
-    $out['content'] = $post->post_content;
-    $out['excerpt'] = $post->post_excerpt;
-    $out['parent'] = $post->post_parent;
-    $out['mime_type'] = $post->post_mime_type;
+    $out['title'] = $attachment->post_title;
+    $out['url'] = $attachment->guid;
+    $out['content'] = $attachment->post_content;
+    $out['excerpt'] = $attachment->post_excerpt;
+    $out['parent'] = $attachment->post_parent;
+    $out['mime_type'] = $attachment->post_mime_type;
     return $out;
 }
 
