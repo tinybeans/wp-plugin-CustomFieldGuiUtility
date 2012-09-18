@@ -4,9 +4,9 @@
   Plugin Name: Custom Field Gui Utility
   Plugin URI: http://www.tinybeans.net/blog/download/wp-plugin/cfg-utility-3.html
   Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
-  Author: Tomohiro Okuwaki（Web屋かたつむりくん）
+  Author: Tomohiro Okuwaki
   Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.6
+  Version: 3.2.7
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -566,14 +566,12 @@ function get_imagefield($key) {
 function get_attachment_object($post_id) {
     global $wpdb;
     $attachment = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE ID = $post_id");
-    $post = $attachment;
-    setup_postdata($post);
-    $out['title'] = $post->post_title;
-    $out['url'] = $post->guid;
-    $out['content'] = $post->post_content;
-    $out['excerpt'] = $post->post_excerpt;
-    $out['parent'] = $post->post_parent;
-    $out['mime_type'] = $post->post_mime_type;
+    $out['title'] = $attachment->post_title;
+    $out['url'] = $attachment->guid;
+    $out['content'] = $attachment->post_content;
+    $out['excerpt'] = $attachment->post_excerpt;
+    $out['parent'] = $attachment->post_parent;
+    $out['mime_type'] = $attachment->post_mime_type;
     return $out;
 }
 
