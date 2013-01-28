@@ -176,11 +176,12 @@ jQuery(function($){
     // Multi Checkbox [end]
 
     // アップロードボタンを調整 [start]
-    $('p.cfg_add_media_pointer a.add_media').addClass('cfg_add_media_clone').removeAttr('id');
+    //$('p.cfg_add_media_pointer a.add_media').addClass('cfg_add_media_clone').removeAttr('id');
     // アップロードボタンを調整 [end]
 
     // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
-    $('a.cfg_add_media_clone').on('click', function(){
+    //$('a.cfg_add_media_clone').on('click', function(){
+    $('b.add_image').on('click', function(){
         var self = $(this);
 
         // アップローダーをクリック(clc)したイメージフィールドのidをcookieに保存
