@@ -49,7 +49,7 @@ jQuery(function($){
 
        // メディアアップローダーのインスタンスを生成
        $media = wp.media({
-         title: '画像を選択',
+         title: 'ファイルを選択',
          button: {
           text: 'カスタムフィールドに挿入'
          },
