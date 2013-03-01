@@ -57,7 +57,6 @@ add_action('transition_post_status', 'edit_meta_value');
 /* 管理画面のhead要素でCSSとJavaScriptファイルの読み込み */
 function insert_head () {
     $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
-	$admin_url = admin_url();
     $head = <<< EOD
     <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
     <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
@@ -69,15 +68,6 @@ function insert_head () {
     <script type="text/javascript">
     jQuery(function($){
         $("form#post").exValidation();
-		if ( $('b.add_image').length ) {
-			$('b.add_image').live('click', function(){
-						
-				// show the thickbox
-				tb_show( 'ファイルをアップロード' , '{$admin_url}media-upload.php?post_id=&TB_iframe=1');
-			
-				return false;
-			});
-		}
     });
     </script>
 EOD;
@@ -283,15 +273,10 @@ function make_textform ($param) {
     }
     $input = make_input ($name, $value, $size, $default, 'text', $placeholder, $validation);
     $media_buttons = '';
-        add_thickbox();
-        wp_enqueue_script('media-upload');
-		$media_buttons = '<b class="add_image ">画像アップロード</b>';
-		/*
     ob_start();
     do_action('media_buttons');
     $media_buttons = ob_get_contents();
     ob_end_clean();
-	*/
     if ($type == 'textfield') {
         $inside = <<< EOF
         <p class='cfg_input'>$input</p>
