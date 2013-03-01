@@ -38,7 +38,7 @@ jQuery(function($){
     function getMediaURL (str) {
         return str.replace(/^(\[[0-9]+\])(.+)/,'$2');
     }
-    
+
     function getMediaType (str) {
         var media_type = str.match(/[a-z]{2,5}$/i);
         if ((media_type == 'pdf')||(media_type == 'PDF')) {
@@ -58,7 +58,7 @@ jQuery(function($){
         }
         return media_type;
     }
-    
+
     // getPageScroll() by quirksmode.com
     function getPageScroll() {
         var xScroll, yScroll;
@@ -70,11 +70,11 @@ jQuery(function($){
             xScroll = document.documentElement.scrollLeft;
         } else if (document.body) {// all other Explorers
             yScroll = document.body.scrollTop;
-            xScroll = document.body.scrollLeft; 
+            xScroll = document.body.scrollLeft;
         }
-        return new Array(xScroll,yScroll) 
+        return new Array(xScroll,yScroll)
     }
-    
+
     // Adapted from getPageSize() by quirksmode.com
     function getPageHeight() {
         var windowHeight
@@ -84,7 +84,7 @@ jQuery(function($){
             windowHeight = document.documentElement.clientHeight;
         } else if (document.body) { // other Explorers
             windowHeight = document.body.clientHeight;
-        } 
+        }
         return windowHeight
     }
     
@@ -99,7 +99,7 @@ jQuery(function($){
         var imaze_size_item = $(id + ' tr.image-size td.field div.image-size-item:has(input:checked)');
         var thumb_size = imaze_size_item.find('label.help').text();
             thumb_size = thumb_size.replace(/(\()([0-9]+)([^0-9]+)([0-9]+)(\))/,'-$2x$4');
-    
+
         var thumb_url = $(id + ' tr.url td.field button.urlfile').attr('title');
         var thumb_ext = thumb_url.match(/\.[a-z]{2,5}$/i);
             thumb_ext = thumb_ext[0].toLowerCase().toString();
@@ -151,7 +151,7 @@ jQuery(function($){
 
     // Multi Checkbox [start]
     $('div.multi_checkbox').each(function(){
-    
+
         var self = $(this);
 
         var checkboxs  = self.find('input:checkbox');
@@ -164,7 +164,7 @@ jQuery(function($){
             data_arry = data_val.split(',');
             checkboxs.val(data_arry);
         }
-        
+
         checkboxs.click(function(){
             var data_arry = new Array;
             self.find('input:checked').each(function(){
@@ -240,18 +240,18 @@ jQuery(function($){
     // カスタムフィールドに「URL」を挿入するボタンのイベント [end]
 
     // 管理画面にサムネイルを表示 [start]
-    $('div.imagefield').each(function(){  
+    $('div.imagefield').each(function(){
         var div = $(this);
         var imf_data = div.find('input.data');
         var imf_val = imf_data.val();
         var imf_cancel = div.find('img.cancel');
-        
+
         if (imf_val) {
             imf_cancel.attr('src', cancel_png).show();
 
             var media_url = getMediaURL(imf_val);
             var media_type = getMediaType(media_url);
-            
+
             imf_data.css({
                 'background':'url(' + images_url + media_type + '.png) no-repeat 3px center',
                 'padding-left':'20px'
@@ -282,7 +282,7 @@ jQuery(function($){
             $(this)
                 .nextAll('span.thumb')
                 .find('a.image').attr('href', media_url).html('<img src="' + media_url + '" width="150" />');
-        });     
+        });
     });
     // 管理画面にサムネイルを表示 [end]
 
@@ -302,7 +302,7 @@ jQuery(function($){
             .hide();
     });
     // 「キャンセル」ボタンを押したときの動作の設定 [end]
-    
+
     // フォーカスしたテキストフィールドの初期値を消す [start]
     $('div.postbox.textfield').find('input.data').each(function(){
         $(this).focus(function(){
@@ -321,7 +321,7 @@ jQuery(function($){
         });
     });
     // フォーカスしたテキストフィールドの初期値を消す [end]
-    
+
     // for facebox.js
     $("a[rel*=facebox]").facebox();
 

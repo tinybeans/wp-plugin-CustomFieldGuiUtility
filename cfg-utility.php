@@ -19,7 +19,7 @@
   Original Plugin's Version: 1.5
   Original Plugin's Author URI: http://rhymedcode.net
 -- /Original Plugin's Information --------------------------------
-*/ 
+*/
 
 /*
 rc:custom_field_gui
@@ -168,7 +168,7 @@ function insert_gui ($obj) {
 
         /* 投稿タイプをチェックする */
         if (!empty($param['class'])) {
-            
+
             $conf_class = preg_replace('/ +/', ' ', trim($param['class']));
             $conf_classes = explode(' ', $conf_class);
             if (!in_array($post_type, $conf_classes)) {
@@ -534,12 +534,12 @@ function edit_meta_value($post_id) {
         $meta_value = isset($_REQUEST["$name"]) ? stripslashes(trim($_REQUEST["$name"])): '';
         if (isset($meta_value) && !empty($meta_value)) {
             delete_post_meta($post_id, $meta_key);
-            if ($data_type == 'textfield' || 
-                $data_type == 'imagefield' || 
-                $data_type == 'filefield' || 
+            if ($data_type == 'textfield' ||
+                $data_type == 'imagefield' ||
+                $data_type == 'filefield' ||
                 $data_type == 'multi_checkbox' ||
                 $data_type == 'radio'  ||
-                $data_type == 'select' || 
+                $data_type == 'select' ||
                 $data_type == 'textarea') {
                 add_post_meta($post_id, $meta_key, $meta_value);
             } elseif ($data['type'] == 'checkbox') {
