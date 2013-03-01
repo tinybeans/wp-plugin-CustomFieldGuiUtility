@@ -3,10 +3,9 @@
 -- This Plugin's Information --------------------------------
   Plugin Name: Custom Field Gui Utility
   Plugin URI: http://www.tinybeans.net/blog/download/wp-plugin/cfg-utility-3.html
-  Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
-  Author: Tomohiro Okuwaki
-  Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.7
+  Description: WordPress 3.5用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」の<a href="http://www.tinybeans.net/blog/">Tomohiro Okuwaki</a>、<a href="http://webcake.no003.info/">Tsuyoshi Kaneko</a>によるカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
+  Author: Tomohiro Okuwaki, Tsuyoshi Kaneko
+  Version: 3.3.0
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -34,6 +33,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 require_once (ABSPATH . 'wp-admin/includes/template.php');
+
+// 管理画面にエディタ機能を追加
+require_once('cfg-extender.php');
 
 add_action ('admin_head','insert_head');
 add_action ('add_meta_boxes', 'isert_custom_field_gui');
@@ -272,11 +274,9 @@ function make_textform ($param) {
         $value = '';
     }
     $input = make_input ($name, $value, $size, $default, 'text', $placeholder, $validation);
-    $media_buttons = '';
-    ob_start();
-    do_action('media_buttons');
-    $media_buttons = ob_get_contents();
-    ob_end_clean();
+
+    $media_buttons = '<input type="submit" class="button cfg-add-image" value="メディアを追加" />';
+
     if ($type == 'textfield') {
         $inside = <<< EOF
         <p class='cfg_input'>$input</p>

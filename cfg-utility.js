@@ -1,12 +1,12 @@
 /*
- * Custom Field GUI Utility 3.2
+ * Custom Field GUI Utility 3.3
  *
- * Copyright (c) Tomohiro Okuwaki
+ * Copyright (c) Tomohiro Okuwaki and Tsuyoshi Kaneko
  * Licensed under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * Since:       2008-10-15
- * Last Update: 2012-04-19
+ * Last Update: 2013-03-01
  *
  * jQuery v1.7.1
  * Facebox 1.2
@@ -14,6 +14,81 @@
  */
 
 jQuery(function($){
+
+    // 新しいメディアアップローダー対応 <START>
+    var css_static = {
+        'position':'static'
+    };
+    var css_required = {
+        'position': 'absolute',
+        'z-index': '9',
+        'width': '580px',
+        'left': '50%',
+        'margin-left': '-290px'
+    };
+
+    var file_type;
+    var admin_url = location.href;
+    var images_url = admin_url.replace(/(http.+)(wp-admin)(.+)/,'$1') + 'wp-content/plugins/custom-field-gui-utility/images/';
+    var cancel_png = images_url + 'cancel.png';
+    var must_png = images_url + 'must.png';
+
+    var $media;
+    var $inp;
+    $('.button.cfg-add-image').click(function(e) {
+       e.preventDefault();
+
+       // inputフィールドを取得
+       $inp = $(this).closest('.inside').find('input.data');
+
+       // 既にメディアアップローダーのインスタンスが存在する場合
+       if ($media) {
+         $media.open();
+         return;
+       }
+
+       // メディアアップローダーのインスタンスを生成
+       $media = wp.media({
+         title: '画像を選択',
+         button: {
+          text: 'カスタムフィールドに挿入'
+         },
+         // 複数ファイル選択を許可しない
+         multiple: false
+       });
+
+       /**
+        * メディア選択時のイベント
+        */
+       $media.on('select', function() {
+         // 選択したメディア情報を取得
+         var attachment = $media.state().get('selection').first().toJSON();
+
+         // メディアのIDとURLをinputフィールドに設定
+         $inp.val("[" + attachment.id  + "]" + attachment.url);
+
+            // テキストフィールドにファイルの種類のアイコンとキャンセルボタンを表示
+                var media_url = getMediaURL ($inp.val());
+                var media_type = getMediaType (attachment.url);
+
+                if (media_type) {
+                    $inp
+                        .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
+                        .css('padding-left','20px')
+                        .end()
+                        .find('a.image')
+                            .attr('href',media_url)
+                            .html('<img src="' + media_url + '" width="150" />');
+                } else {
+                    $inp.removeAttr('style');
+                }
+                $inp.parent().find('img.cancel').attr('src', cancel_png).show();
+       });
+
+       // メディアアップローダーを開く
+       $media.open();
+    });
+    // 新しいメディアアップローダー対応 </END>
 
     // 必須項目の設定（exValidation用）
     $('div.must').each(function(){
@@ -87,14 +162,7 @@ jQuery(function($){
         }
         return windowHeight
     }
-    
-    function insert_btn (id) {
-        var imf_ins_btns = 
-            '<button title="#' + id + '" class="button imf_ins_url" type="button">カスタムフィールドに挿入</button>';
 
-        return imf_ins_btns;
-    }
-    
     function get_thumb_url (id) {
         var imaze_size_item = $(id + ' tr.image-size td.field div.image-size-item:has(input:checked)');
         var thumb_size = imaze_size_item.find('label.help').text();
@@ -106,48 +174,6 @@ jQuery(function($){
             thumb_url = thumb_url.replace(/(\.[a-z]{2,5}$)/i,thumb_size + thumb_ext);
         return thumb_url;
     }
-
-    // cookieのセット
-    function setCookie(key, val, days){
-        var cookie = escape(key) + "=" + escape(val);
-        if(days != null){
-            var expires = new Date();
-            expires.setDate(expires.getDate() + days);
-            cookie += ";expires=" + expires.toGMTString();
-        }
-        document.cookie = cookie;
-    }
-    
-    // cookieの取得
-    function getCookie(key) {
-        if(document.cookie){
-            var cookies = document.cookie.split(";");
-            for(var i=0; i<cookies.length; i++){
-                var cookie = cookies[i].replace(/\s/g,"").split("=");
-                if(cookie[0] == escape(key)){
-                    return unescape(cookie[1]);
-                }
-            }
-        }
-        return "";
-    }
-
-    var css_static = {
-        'position':'static'
-    };
-    var css_required = {
-        'position': 'absolute',
-        'z-index': '9',
-        'width': '580px',
-        'left': '50%',
-        'margin-left': '-290px'
-    };
-
-    var file_type;
-    var admin_url = location.href;
-    var images_url = admin_url.replace(/(http.+)(wp-admin)(.+)/,'$1') + 'wp-content/plugins/custom-field-gui-utility/images/';
-    var cancel_png = images_url + 'cancel.png';
-    var must_png = images_url + 'must.png';
 
     // Multi Checkbox [start]
     $('div.multi_checkbox').each(function(){
@@ -174,70 +200,6 @@ jQuery(function($){
         });
     });
     // Multi Checkbox [end]
-
-    // アップロードボタンを調整 [start]
-    $('p.cfg_add_media_pointer a.add_media').addClass('cfg_add_media_clone').removeAttr('id');
-    // アップロードボタンを調整 [end]
-
-    // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [start]
-    $('a.cfg_add_media_clone').on('click', function(){
-        var self = $(this);
-
-        // アップローダーをクリック(clc)したイメージフィールドのidをcookieに保存
-        var clc_id = self.closest('div.imagefield').attr('id');
-        setCookie('imf_clc_id',clc_id);
-    });
-    // イメージフィールド・ファイルフィールド周りのliveイベントを設定 [end]
-
-    // アップローダーにカスタムフィールド用ボタンを追加 [start]
-    $('#media-items div.media-item').each(function(){
-        var id = $(this).find('thead').attr('id');
-        $(this).find('tr.submit td.savesend').prepend(insert_btn(id));
-    }).live('mouseover', function(){
-        var id = $(this).find('thead').attr('id');
-        if (!($(this).find('tr.submit td.savesend button.imf_ins_url').length)){
-            $(this).find('tr.submit td.savesend').prepend(insert_btn(id));
-        }
-    });
-    // アップローダーにカスタムフィールド用ボタンを追加 [end]
-
-    // カスタムフィールドに挿入するボタンのイベント [start]
-    $('button.imf_ins_url').live('click', function(){
-        var id = $(this).attr('title').replace(/#media-head-/,'');
-        var media_url = $(this).closest('tr.submit').prevAll('tr.url').find('td.field input.urlfield').val();
-        var imf_val = '[' + id + ']' + media_url;
-
-        var parent_doc = this.ownerDocument.defaultView || this.ownerDocument.parentWindow;
-        parent_doc = parent_doc.parent.document;
-
-        var imf_clc_id = '#' + getCookie('imf_clc_id');
-        var imf_elm = $(parent_doc).find(imf_clc_id);
-        setCookie('imf_clc_id','');
-        
-        // カスタムフィールドに値を入れる
-        if (imf_val) {
-            imf_elm.find('input.data').val(imf_val);
-            // テキストフィールドにファイルの種類のアイコンとキャンセルボタンを表示
-            var media_url = getMediaURL (imf_val);
-            var media_type = getMediaType (media_url);
-            if (media_type) {
-                imf_elm
-                    .find('input.data')
-                        .css('background','url(' + images_url + media_type + '.png) no-repeat 3px center')
-                        .css('padding-left','20px')
-                    .end()
-                    .find('a.image')
-                        .attr('href',media_url)
-                        .html('<img src="' + media_url + '" width="150" />');
-            } else {
-                imf_elm.find('input.data').removeAttr('style');          
-            }
-            imf_elm.find('img.cancel').attr('src', cancel_png).show();
-        }
-
-        $('p.ml-submit input:submit').click();
-    });
-    // カスタムフィールドに「URL」を挿入するボタンのイベント [end]
 
     // 管理画面にサムネイルを表示 [start]
     $('div.imagefield').each(function(){
