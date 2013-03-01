@@ -3,10 +3,9 @@
 -- This Plugin's Information --------------------------------
   Plugin Name: Custom Field Gui Utility
   Plugin URI: http://www.tinybeans.net/blog/download/wp-plugin/cfg-utility-3.html
-  Description: WordPress 3.3x用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」のカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
-  Author: Tomohiro Okuwaki
-  Author URI: http://www.tinybeans.net/blog/
-  Version: 3.2.7
+  Description: WordPress 3.5用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」の<a href="http://www.tinybeans.net/blog/">Tomohiro Okuwaki</a>、<a href="http://webcake.no003.info/">Tsuyoshi Kaneko</a>によるカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
+  Author: Tomohiro Okuwaki, Tsuyoshi Kaneko
+  Version: 3.3.0
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
@@ -19,7 +18,7 @@
   Original Plugin's Version: 1.5
   Original Plugin's Author URI: http://rhymedcode.net
 -- /Original Plugin's Information --------------------------------
-*/ 
+*/
 
 /*
 rc:custom_field_gui
@@ -34,6 +33,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 require_once (ABSPATH . 'wp-admin/includes/template.php');
+
+// 管理画面にエディタ機能を追加
+require_once('cfg-extender.php');
 
 add_action ('admin_head','insert_head');
 add_action ('add_meta_boxes', 'isert_custom_field_gui');
@@ -57,7 +59,6 @@ add_action('transition_post_status', 'edit_meta_value');
 /* 管理画面のhead要素でCSSとJavaScriptファイルの読み込み */
 function insert_head () {
     $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
-	$admin_url = admin_url();
     $head = <<< EOD
     <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
     <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
@@ -69,15 +70,6 @@ function insert_head () {
     <script type="text/javascript">
     jQuery(function($){
         $("form#post").exValidation();
-		if ( $('b.add_image').length ) {
-			$('b.add_image').live('click', function(){
-						
-				// show the thickbox
-				tb_show( 'ファイルをアップロード' , '{$admin_url}media-upload.php?post_id=&TB_iframe=1');
-			
-				return false;
-			});
-		}
     });
     </script>
 EOD;
@@ -178,7 +170,7 @@ function insert_gui ($obj) {
 
         /* 投稿タイプをチェックする */
         if (!empty($param['class'])) {
-            
+
             $conf_class = preg_replace('/ +/', ' ', trim($param['class']));
             $conf_classes = explode(' ', $conf_class);
             if (!in_array($post_type, $conf_classes)) {
@@ -282,16 +274,9 @@ function make_textform ($param) {
         $value = '';
     }
     $input = make_input ($name, $value, $size, $default, 'text', $placeholder, $validation);
-    $media_buttons = '';
-        add_thickbox();
-        wp_enqueue_script('media-upload');
-		$media_buttons = '<b class="add_image ">画像アップロード</b>';
-		/*
-    ob_start();
-    do_action('media_buttons');
-    $media_buttons = ob_get_contents();
-    ob_end_clean();
-	*/
+
+    $media_buttons = '<input type="submit" class="button cfg-add-image" value="メディアを追加" />';
+
     if ($type == 'textfield') {
         $inside = <<< EOF
         <p class='cfg_input'>$input</p>
@@ -549,12 +534,12 @@ function edit_meta_value($post_id) {
         $meta_value = isset($_REQUEST["$name"]) ? stripslashes(trim($_REQUEST["$name"])): '';
         if (isset($meta_value) && !empty($meta_value)) {
             delete_post_meta($post_id, $meta_key);
-            if ($data_type == 'textfield' || 
-                $data_type == 'imagefield' || 
-                $data_type == 'filefield' || 
+            if ($data_type == 'textfield' ||
+                $data_type == 'imagefield' ||
+                $data_type == 'filefield' ||
                 $data_type == 'multi_checkbox' ||
                 $data_type == 'radio'  ||
-                $data_type == 'select' || 
+                $data_type == 'select' ||
                 $data_type == 'textarea') {
                 add_post_meta($post_id, $meta_key, $meta_value);
             } elseif ($data['type'] == 'checkbox') {
