@@ -29,7 +29,7 @@ jQuery(function($){
 
     var file_type;
     var admin_url = location.href;
-    var images_url = admin_url.replace(/(http.+)(wp-admin)(.+)/,'$1') + 'wp-content/plugins/custom-field-gui-utility/images/';
+    var images_url = admin_url.replace(/(http.+)(wp-admin)(.+)/,'$1') + 'wp-content/plugins/' + current_dir + '/images/';
     var cancel_png = images_url + 'cancel.png';
     var must_png = images_url + 'must.png';
 

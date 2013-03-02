@@ -58,11 +58,15 @@ add_action('transition_post_status', 'edit_meta_value');
 
 /* 管理画面のhead要素でCSSとJavaScriptファイルの読み込み */
 function insert_head () {
-    $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/custom-field-gui-utility/';
+    $current_dir = basename(dirname(__FILE__));
+    $plugin_url = get_bloginfo('wpurl') . '/wp-content/plugins/' . $current_dir . '/';
     $head = <<< EOD
     <link rel="stylesheet" href="{$plugin_url}facebox/facebox.css" type="text/css" media="all" />
     <link rel="stylesheet" href="{$plugin_url}cfg-utility.css" type="text/css" media="all" />
     <link rel="stylesheet" href="{$plugin_url}exValidation/css/exvalidation.css" type="text/css" />
+    <script type="text/javascript">
+    var current_dir = "{$current_dir}";
+    </script>
     <script type="text/javascript" src="{$plugin_url}facebox/facebox.js"></script>
     <script type="text/javascript" src="{$plugin_url}exValidation/js/exvalidation.js"></script>
     <script type="text/javascript" src="{$plugin_url}exValidation/js/exchecker-ja.js"></script>
