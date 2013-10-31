@@ -415,7 +415,7 @@ function make_radio ($param) {
     }
     $item_array = array();
     foreach($values as $val) {
-        $id = $name . '_' . sanitize_name($val);
+        $id = $name . '_' . uniqid();
         $checked = (trim($val) == $selected) ? ' checked="checked"' : ' ';
         $item = <<< EOF
             <p class="cfg_input">
