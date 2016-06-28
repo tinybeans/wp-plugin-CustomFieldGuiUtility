@@ -18,7 +18,7 @@
 	background: #666666;
 	opacity: 0.9;
 	filter: alpha(opacity=90);
-	-ms-filter: 'alpha(opacity=90)';	
+	-ms-filter: 'alpha(opacity=90)';
 }
 #required_box {
     display: none;
@@ -97,13 +97,13 @@ div.multi_checkbox div.inside p.cfg_input label {
 .postbox_hr {
 	margin-bottom: 20px !important;
 	padding: 7px 9px;
-	border-radius: 6px !important;
-	-moz-border-radius: 6px !important;
-	-webkit-border-radius: 6px !important;
+	border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
 	line-height: 1;
 	font-size: 12px;
 	font-weight: bold;
-	background: #DFDFDF url(../images/gray-grad.png) repeat-x scroll left top;
+	background-color: #DFDFDF;
 	color: #464646;
 }
 
