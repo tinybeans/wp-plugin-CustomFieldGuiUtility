@@ -5,7 +5,7 @@
   Plugin URI: http://www.tinybeans.net/blog/download/wp-plugin/cfg-utility-3.html
   Description: WordPress 3.5用。カスタムフィールドを使いやすくするプラグイン「Custom Field GUI」の<a href="http://www.tinybeans.net/blog/">Tomohiro Okuwaki</a>、<a href="http://webcake.no003.info/">Tsuyoshi Kaneko</a>によるカスタマイズ版。オリジナルプラグインの作者は、 <a href="http://rhymedcode.net">Joshua Sigar氏</a>。
   Author: Tomohiro Okuwaki, Tsuyoshi Kaneko
-  Version: 3.3.0
+  Version: 3.3.1
   Customize: Tomohiro Okuwaki (http://www.tinybeans.net/blog/)
   Thanks: @hadakadenkyu <http://twitter.com/hadakadenkyu>
 -- This Plugin's Information --------------------------------
